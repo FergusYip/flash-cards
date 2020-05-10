@@ -6,10 +6,26 @@ const Card = require("../models/card");
 
 router.get("/", (req, res, next) => {
     Card.find()
+        .select("_id prompt answer")
         .exec()
         .then((docs) => {
+            const response = {
+                count: docs.length,
+                cards: docs,
+                // cards: docs.map((doc) => {
+                //     return {
+                //         _id: doc._id,
+                //         prompt: doc.prompt,
+                //         answer: doc.answer,
+                //         request: {
+                //             type: "GET",
+                //             url: "http://localhost:3000/card/" + doc._id,
+                //         },
+                //     };
+                // }),
+            };
             console.log(docs);
-            res.status(200).json(docs);
+            res.status(200).json(response);
         })
         .catch((err) => {
             console.log(err);
@@ -19,7 +35,7 @@ router.get("/", (req, res, next) => {
         });
 });
 
-router.post("/create", (req, res, next) => {
+router.post("/", (req, res, next) => {
     const card = new Card({
         _id: new mongoose.Types.ObjectId(),
         prompt: req.body.prompt,
@@ -30,7 +46,7 @@ router.post("/create", (req, res, next) => {
         .then((result) => {
             console.log(result);
             res.status(200).json({
-                message: "Handling POST request to /card",
+                message: "Created new card successfully",
                 card: card,
             });
         })
