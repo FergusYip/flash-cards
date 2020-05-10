@@ -4,7 +4,7 @@ const morgan = require("morgan"); // Logging package
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const cardRoutes = require("./api/routes/card");
+const cardRoutes = require("./api/routes/cards");
 
 mongoose.connect(process.env.MONGO_ATLAS_URI, {
     useNewUrlParser: true,
@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 });
 
 // API Endpoints
-app.use("/card", cardRoutes);
+app.use("/cards", cardRoutes);
 
 // Error Handling
 app.use((req, rs, next) => {

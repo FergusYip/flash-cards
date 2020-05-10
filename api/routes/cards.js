@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const Card = require("../models/card");
+const Card = require("../models/cards");
 
 router.get("/", (req, res, next) => {
     Card.find()
@@ -42,7 +42,7 @@ router.post("/", (req, res, next) => {
         answer: req.body.answer,
     });
 
-    card.save()
+    Card.save()
         .then((result) => {
             console.log(result);
             res.status(200).json({
