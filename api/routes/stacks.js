@@ -2,27 +2,16 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const Card = require("../models/cards");
+const Stack = require("../models/stacks");
 
 router.get("/", (req, res, next) => {
-    Card.find()
-        .select("_id prompt answer")
+    Stack.find()
+        // .select("_id prompt answer")
         .exec()
         .then((docs) => {
             const response = {
                 count: docs.length,
-                cards: docs,
-                // cards: docs.map((doc) => {
-                //     return {
-                //         _id: doc._id,
-                //         prompt: doc.prompt,
-                //         answer: doc.answer,
-                //         request: {
-                //             type: "GET",
-                //             url: "http://localhost:3000/card/" + doc._id,
-                //         },
-                //     };
-                // }),
+                stacks: docs,
             };
             console.log(docs);
             res.status(200).json(response);
@@ -36,18 +25,19 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/", (req, res, next) => {
-    const card = new Card({
+    const stack = new Stack({
         _id: new mongoose.Types.ObjectId(),
-        prompt: req.body.prompt,
-        answer: req.body.answer,
+        name: req.body.name,
+        cards: [],
     });
 
-    card.save()
+    stack
+        .save()
         .then((result) => {
             console.log(result);
             res.status(200).json({
-                message: "Created new card successfully",
-                card: card,
+                message: "Created new stack successfully",
+                stack: stack,
             });
         })
         .catch((err) => {
@@ -58,10 +48,9 @@ router.post("/", (req, res, next) => {
         });
 });
 
-router.get("/:cardId", (req, res, next) => {
-    const id = req.params.cardId;
-
-    Card.findById(id)
+router.get("/:stackId", (req, res, next) => {
+    const id = req.params.stackId;
+    Stack.findById(id)
         .exec()
         .then((doc) => {
             console.log(doc);
@@ -81,15 +70,15 @@ router.get("/:cardId", (req, res, next) => {
         });
 });
 
-router.patch("/:cardId", (req, res, next) => {
-    const id = req.params.cardId;
+router.patch("/:stackId", (req, res, next) => {
+    const id = req.params.stackId;
     const updateOps = {};
     for (const ops of req.body) {
         console.log(ops);
         updateOps[ops.propName] = ops.value;
     }
     console.log(updateOps);
-    Card.update(
+    Stack.update(
         { _id: id },
         {
             $set: updateOps,
@@ -108,10 +97,10 @@ router.patch("/:cardId", (req, res, next) => {
         });
 });
 
-router.delete("/:cardId", (req, res, next) => {
-    const id = req.params.cardId;
+router.delete("/:stackId", (req, res, next) => {
+    const id = req.params.stackId;
 
-    Card.remove({ _id: id })
+    Stack.remove({ _id: id })
         .exec()
         .then((result) => {
             res.status(200).json(result);

@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const cardRoutes = require("./api/routes/cards");
+const stackRoutes = require("./api/routes/stacks");
 
 mongoose.connect(process.env.MONGO_ATLAS_URI, {
     useNewUrlParser: true,
@@ -34,6 +35,7 @@ app.use((req, res, next) => {
 
 // API Endpoints
 app.use("/cards", cardRoutes);
+app.use("/stacks", stackRoutes);
 
 // Error Handling
 app.use((req, rs, next) => {
