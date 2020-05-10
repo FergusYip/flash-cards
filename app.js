@@ -6,7 +6,10 @@ const mongoose = require("mongoose");
 
 const cardRoutes = require("./api/routes/card");
 
-mongoose.connect(process.env.MONGO_ATLAS_URI, { useMongoClient: true });
+mongoose.connect(process.env.MONGO_ATLAS_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
 
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
