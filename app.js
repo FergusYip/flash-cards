@@ -4,14 +4,15 @@ const morgan = require('morgan'); // Logging package
 const bodyParser = require('body-parser');
 
 
-const cardRoutes = require('./api/routes/cards');
+const cardRoutes = require('./api/routes/card');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// CORS
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', '*'); // * = any origin
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     if (req.method === 'OPTIONS') {
         res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
@@ -20,8 +21,11 @@ app.use((req, res, next) => {
     next();
 })
 
-app.use('/cards', cardRoutes);
+// API Endpoints
+app.use('/card', cardRoutes);
 
+
+// Error Handling
 app.use((req, rs, next) => {
     const error = new Error('Not Found');
     error.status = 404;

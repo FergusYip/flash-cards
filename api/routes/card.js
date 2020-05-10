@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get('/', (req, res, next) => {
     res.status(200).json({
-        message: 'Handling GET request to /cards'
+        message: 'Handling GET request to /card'
     })
 })
 
@@ -12,7 +12,7 @@ router.post('/', (req, res, next) => {
         contents: req.body.contents
     }
     res.status(200).json({
-        message: 'Handling POST request to /cards',
+        message: 'Handling POST request to /card',
         card: card
     })
 })
