@@ -1,0 +1,5 @@
+{
+    "env": {
+        "MONGO_ATLAS_URI": "mongodb+srv://mongoadmin:2IGUKUyDUFEvcSMY@flash-cards-pawi7.mongodb.net/test?retryWrites=true&w=majority"
+    }
+}
