@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
+const Card = require("../models/cards");
 const Stack = require("../models/stacks");
 
 router.get("/", (req, res, next) => {
@@ -104,6 +105,58 @@ router.delete("/:stackId", (req, res, next) => {
         .exec()
         .then((result) => {
             res.status(200).json(result);
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).json({
+                error: err,
+            });
+        });
+});
+
+// Add multiple cards to the stack
+// Body = Array of ObjectIDs
+router.post("/:stackID/add", (req, res, next) => {
+    const id = req.params.stackID;
+    cards = req.body.cards;
+    // card = req.body.card;
+
+    const validCards = [];
+    const invalidCards = [];
+    for (const cardID of cards) {
+        Card.findById(cardID)
+            .then((doc) => {
+                if (doc) {
+                    validCards.push(cardID);
+                } else {
+                    invalidCards.push(cardID);
+                }
+                console.log(validCards);
+            })
+            .catch((err) => {
+                invalidCards.push(cardID);
+                console.log(err);
+                // res.status(500).json({
+                //     error: err,
+                // });
+            });
+    }
+
+    Stack.update(
+        { _id: id },
+        {
+            $push: { cards: validCards },
+        }
+    )
+        .exec()
+        .then((result) => {
+            const response = {
+                result: result,
+                success: validCards,
+                failed: invalidCards,
+            };
+            console.log(response);
+            res.status(200).json(response);
         })
         .catch((err) => {
             console.log(err);
