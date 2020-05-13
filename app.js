@@ -12,6 +12,9 @@ mongoose.connect(process.env.MONGO_ATLAS_URI, {
     useUnifiedTopology: true,
 });
 
+let db = mongoose.connection;
+db.on("error", console.error.bind(console, "Mongooose: Connection error"));
+
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
