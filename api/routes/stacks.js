@@ -114,53 +114,81 @@ router.delete("/:stackId", (req, res, next) => {
         });
 });
 
-// Add multiple cards to the stack
-// Body = Array of ObjectIDs
+// Add a card to the stack
 router.post("/:stackID/add", (req, res, next) => {
     const id = req.params.stackID;
-    cards = req.body.cards;
-    // card = req.body.card;
+    const cardID = req.body.cardID;
 
-    const validCards = [];
-    const invalidCards = [];
-    for (const cardID of cards) {
-        Card.findById(cardID)
-            .then((doc) => {
-                if (doc) {
-                    validCards.push(cardID);
-                } else {
-                    invalidCards.push(cardID);
-                }
-                console.log(validCards);
-            })
-            .catch((err) => {
-                invalidCards.push(cardID);
-                console.log(err);
-                // res.status(500).json({
-                //     error: err,
-                // });
-            });
-    }
-
-    Stack.update(
-        { _id: id },
-        {
-            $push: { cards: validCards },
-        }
-    )
-        .exec()
+    Card.findById(cardID)
+        .then((doc) => {
+            if (doc) {
+                return Stack.update(
+                    { _id: id },
+                    {
+                        $addToSet: { cards: doc._id },
+                    }
+                );
+            } else {
+                res.status(400).json({
+                    cardID: cardID,
+                    error: "No valid entry found for provided ID.",
+                });
+            }
+        })
         .then((result) => {
-            const response = {
+            res.status(200).json({
+                message: "Successfully added card to stack",
                 result: result,
-                success: validCards,
-                failed: invalidCards,
-            };
-            console.log(response);
-            res.status(200).json(response);
+            });
         })
         .catch((err) => {
             console.log(err);
             res.status(500).json({
+                cardID: cardID,
+                error: err,
+            });
+        });
+});
+
+// Remove card from the stack
+// Body = Array of ObjectIDs
+router.delete("/:stackID/remove", (req, res, next) => {
+    const id = req.params.stackID;
+    const cardID = req.body.cardID;
+
+    Card.findById(cardID)
+        .then((doc) => {
+            if (doc) {
+                return Stack.update(
+                    { _id: id },
+                    {
+                        $pull: { cards: doc._id },
+                    }
+                );
+            } else {
+                res.status(400).json({
+                    cardID: cardID,
+                    error: "No valid entry found for provided ID.",
+                });
+            }
+        })
+        .then((result) => {
+            if (result.nModified == 0) {
+                res.status(400).json({
+                    error: "Failed to remove card from stack",
+                    result: result,
+                });
+            } else {
+                res.status(200).json({
+                    message: "Removed card from stack",
+                    result: result,
+                });
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).json({
+                cardID: cardID,
                 error: err,
             });
         });
