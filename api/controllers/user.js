@@ -48,38 +48,33 @@ exports.user_login = (req, res, next) => {
     .exec()
     .then((user) => {
       if (user) {
-        bcrypt
-          .compare(req.body.password, user.password)
-          .then((result) => {
-            if (result) {
-              const token = jwt.sign(
-                {
-                  email: email,
-                  userId: user._id,
-                },
-                process.env.JWT_KEY,
-                {
-                  expiresIn: "1h",
-                }
-              );
-              res.status(200).json({
-                message: "Successfully authenticated user",
-                token: token,
-                userId: user._id,
-              });
-            } else {
-              res.status(401).json({
-                message: "Failed to authenticate user",
-              });
-            }
-          })
-          .catch((err) => {
-            res.status(500).json({
-              error: err,
-            });
-          });
+        return bcrypt.compare(req.body.password, user.password);
       } else {
         // User does not exist
+        return res.status(401).json({
+          message: "Failed to authenticate user",
+        });
+      }
+    })
+    .then((result) => {
+      if (result) {
+        const token = jwt.sign(
+          {
+            email: email,
+            userId: user._id,
+          },
+          process.env.JWT_KEY,
+          {
+            expiresIn: "1h",
+          }
+        );
+        res.status(200).json({
+          message: "Successfully authenticated user",
+          token: token,
+          userId: user._id,
+        });
+      } else {
+        // Incorrect password
         res.status(401).json({
           message: "Failed to authenticate user",
         });
