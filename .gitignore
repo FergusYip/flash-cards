@@ -105,3 +105,6 @@ dist
 
 # nodemon config
 nodemon.json
+
+# VS Code
+.vscode/
