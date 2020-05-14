@@ -14,39 +14,31 @@ exports.user_signup = (req, res, next) => {
           message: "Email provided is already registered",
         });
       } else {
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({
-              error: err,
-            });
-          } else {
-            const user = new User({
-              _id: new mongoose.Types.ObjectId(),
-              email: email,
-              password: hash,
-              name: req.body.name,
-            });
-            user
-              .save()
-              .then((result) => {
-                console.log(result);
-                res.status(200).json({
-                  message: "Sign up successful",
-                  userId: user._id,
-                  email: user.email,
-                  name: user.name,
-                });
-              })
-              .catch((err) => {
-                console.log(err);
-                res.status(500).json({
-                  error: err,
-                });
-              });
-          }
-        });
+        return bcrypt.hash(req.body.password, 10);
       }
+    })
+    .then((hash) => {
+      const user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        email: email,
+        password: hash,
+        name: req.body.name,
+      });
+      user.save().then((result) => {
+        console.log(user);
+        res.status(200).json({
+          message: "Sign up successful",
+          userId: user._id,
+          email: user.email,
+          name: user.name,
+        });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
     });
 };
 
