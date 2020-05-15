@@ -27,12 +27,14 @@ exports.stacks_get_all = (req, res, next) => {
 exports.stacks_get_stacks = (req, res, next) => {
   const userId = req.tokenPayload.userId;
   User.findById(userId)
-    .populate("stacks")
+    .populate("stacks defaultStack", "name cards _id")
     .exec()
-    .then((result) => {
-      console.log(result);
-      // res.status(400).json({ stacks: result.stacks });
-      return res.status(400).json({ result: result });
+    .then((user) => {
+      console.log(user);
+      res.status(400).json({
+        stacks: user.stacks.map((stack) => stack.transform()),
+        defaultStack: user.defaultStack.transform(),
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -60,16 +62,20 @@ exports.stacks_create_stack = (req, res, next) => {
       );
     })
     .then((result) => {
-      console.log(result);
+      // console.log(result);
       return res.status(200).json({
         message: "Created new stack successfully",
-        stack: stack,
-        result: result,
+        stack: {
+          stackId: stack._id,
+          name: stack.name,
+          cards: stack.cards,
+        },
+        // result: result,
       });
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({
+      return res.status(500).json({
         error: err,
       });
     });
@@ -78,12 +84,18 @@ exports.stacks_create_stack = (req, res, next) => {
 exports.stacks_get_stack = (req, res, next) => {
   const id = req.params.stackId;
   Stack.findById(id)
-    .populate("cards")
+    .populate("cards", "_id prompt answer")
     .exec()
-    .then((doc) => {
-      console.log(doc);
-      if (doc) {
-        res.status(200).json(doc);
+    .then((stack) => {
+      if (stack) {
+        res.status(200).json({
+          message: "Successfully obtained stack",
+          stack: {
+            stackId: stack._id,
+            name: stack.name,
+            cards: stack.cards.map((card) => card.transform()),
+          },
+        });
       } else {
         res.status(404).json({
           message: "No valid entry found for provided ID.",
@@ -92,7 +104,7 @@ exports.stacks_get_stack = (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({
+      return res.status(500).json({
         error: err,
       });
     });
@@ -170,16 +182,16 @@ exports.stacks_add_card = (req, res, next) => {
           }
         );
       } else {
-        res.status(400).json({
+        return res.status(400).json({
           cardID: cardID,
           error: "No valid entry found for provided ID.",
         });
       }
     })
     .then((result) => {
-      res.status(200).json({
+      return res.status(200).json({
         message: "Successfully added card to stack",
-        result: result,
+        // result: result,
       });
     })
     .catch((err) => {
