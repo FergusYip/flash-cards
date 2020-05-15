@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const Card = require("../models/cards");
 const Stack = require("../models/stacks");
+const User = require("../models/user");
 
 exports.stacks_get_all = (req, res, next) => {
   Stack.find()
@@ -23,7 +24,25 @@ exports.stacks_get_all = (req, res, next) => {
     });
 };
 
+exports.stacks_get_stacks = (req, res, next) => {
+  const userId = req.tokenPayload.userId;
+  User.findById(userId)
+    .populate("stacks")
+    .exec()
+    .then((result) => {
+      console.log(result);
+      // res.status(400).json({ stacks: result.stacks });
+      return res.status(400).json({ result: result });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).json({ error: err });
+    });
+};
+
 exports.stacks_create_stack = (req, res, next) => {
+  const userId = req.tokenPayload.userId;
+
   const stack = new Stack({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
@@ -33,10 +52,19 @@ exports.stacks_create_stack = (req, res, next) => {
   stack
     .save()
     .then((result) => {
+      return User.update(
+        { _id: userId },
+        {
+          $addToSet: { stacks: result._id },
+        }
+      );
+    })
+    .then((result) => {
       console.log(result);
-      res.status(200).json({
+      return res.status(200).json({
         message: "Created new stack successfully",
         stack: stack,
+        result: result,
       });
     })
     .catch((err) => {
@@ -50,6 +78,7 @@ exports.stacks_create_stack = (req, res, next) => {
 exports.stacks_get_stack = (req, res, next) => {
   const id = req.params.stackId;
   Stack.findById(id)
+    .populate("cards")
     .exec()
     .then((doc) => {
       console.log(doc);
@@ -97,12 +126,26 @@ exports.stacks_patch_stack = (req, res, next) => {
 };
 
 exports.stacks_delete_stack = (req, res, next) => {
-  const id = req.params.stackId;
-
-  Stack.remove({ _id: id })
+  const stackId = req.params.stackId;
+  const userId = req.tokenPayload.userId;
+  Stack.findByIdAndDelete(stackId)
     .exec()
-    .then((result) => {
-      res.status(200).json(result);
+    .then((stack) => {
+      if (!stack) {
+        return res.status(400).json({
+          stackId: stackId,
+          error: "No valid entry found for provided stackId.",
+        });
+      }
+      User.update({ _id: userId }, { $pull: { stacks: stackId } }).then(
+        (result) => {
+          res.status(200).json({
+            message: "Successfully deleted stack",
+            stack: stack,
+            // result: result,
+          });
+        }
+      );
     })
     .catch((err) => {
       console.log(err);
@@ -114,8 +157,8 @@ exports.stacks_delete_stack = (req, res, next) => {
 
 // Add a card to the stack
 exports.stacks_add_card = (req, res, next) => {
-  const id = req.params.stackID;
-  const cardID = req.body.cardID;
+  const id = req.params.stackId;
+  const cardID = req.body.cardId;
 
   Card.findById(cardID)
     .then((doc) => {

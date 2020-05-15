@@ -5,7 +5,9 @@ const checkAuth = require("../auth/check-auth");
 
 const StacksController = require("../controllers/stacks");
 
-router.get("/", StacksController.stacks_get_all);
+router.get("/all", StacksController.stacks_get_all);
+
+router.get("/", checkAuth, StacksController.stacks_get_stacks);
 
 router.post("/", checkAuth, StacksController.stacks_create_stack);
 
@@ -15,7 +17,7 @@ router.patch("/:stackId", checkAuth, StacksController.stacks_patch_stack);
 
 router.delete("/:stackId", checkAuth, StacksController.stacks_delete_stack);
 
-router.post("/:stackID/add", checkAuth, StacksController.stacks_add_card);
+router.post("/:stackId/add", checkAuth, StacksController.stacks_add_card);
 
 router.delete(
   "/:stackID/remove",
