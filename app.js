@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const authRoutes = require("./api/routes/auth");
+const userRoutes = require("./api/routes/user");
 const cardRoutes = require("./api/routes/cards");
 const stackRoutes = require("./api/routes/stacks");
 
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 
 // API Endpoints
 app.use("/auth", authRoutes);
+app.use("/user", userRoutes);
 app.use("/cards", cardRoutes);
 app.use("/stacks", stackRoutes);
 
