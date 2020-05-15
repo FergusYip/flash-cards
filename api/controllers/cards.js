@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 
 const Card = require("../models/cards");
+const Stack = require("../models/stacks");
+const User = require("../models/user");
 
 exports.cards_get_all = (req, res, next) => {
   Card.find()
@@ -34,24 +36,53 @@ exports.cards_get_all = (req, res, next) => {
 };
 
 exports.cards_create_card = (req, res, next) => {
-  const card = new Card({
-    _id: new mongoose.Types.ObjectId(),
-    prompt: req.body.prompt,
-    answer: req.body.answer,
-  });
+  const userId = req.tokenPayload.userId;
+  const { prompt, answer } = req.body;
+  let stackId = req.body.stackId;
 
-  card
-    .save()
+  User.findById(userId)
+    .exec()
+    .then((user) => {
+      const card = new Card({
+        _id: new mongoose.Types.ObjectId(),
+        prompt: prompt,
+        answer: answer,
+      });
+
+      if (stackId == null) {
+        console.log("stackId is null");
+        stackId = user.defaultStack;
+      }
+      console.log(stackId);
+      return Promise.all([
+        card.save(),
+        Stack.findByIdAndUpdate(
+          stackId,
+          { $addToSet: { cards: card } },
+          { new: true }
+        )
+          .select("cards _id name")
+          .exec(),
+      ]);
+    })
     .then((result) => {
-      console.log(result);
-      res.status(200).json({
+      const [card, stack] = result;
+      if (stack == null) {
+        console.log("after promise: stack is null");
+      }
+      return res.status(200).json({
         message: "Created new card successfully",
-        card: card,
+        card: {
+          cardId: card._id,
+          prompt: card.prompt,
+          answer: card.answer,
+        },
+        stack: stack.transform(),
       });
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({
+      return res.status(500).json({
         error: err,
       });
     });
