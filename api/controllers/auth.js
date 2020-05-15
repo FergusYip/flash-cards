@@ -47,66 +47,44 @@ exports.auth_login = (req, res, next) => {
   User.findOne({ email: email })
     .exec()
     .then((user) => {
-      if (user) {
-        return bcrypt.compare(req.body.password, user.password);
-      } else {
+      if (!user) {
         // User does not exist
         return res.status(401).json({
           message: "Failed to authenticate user",
         });
-      }
-    })
-    .then((user) => {
-      if (user) {
-        const token = jwt.sign(
-          {
-            email: email,
-            userId: user._id,
-          },
-          process.env.JWT_KEY,
-          {
-            expiresIn: "1h",
-          }
-        );
-        res.status(200).json({
-          message: "Successfully authenticated user",
-          token: token,
-          userId: user._id,
-        });
       } else {
-        // Incorrect password
-        res.status(401).json({
-          message: "Failed to authenticate user",
+        bcrypt.compare(req.body.password, user.password).then((result) => {
+          if (result) {
+            const token = jwt.sign(
+              {
+                email: email,
+                userId: user._id,
+              },
+              process.env.JWT_KEY,
+              {
+                expiresIn: "1h",
+              }
+            );
+            console.log(user);
+            return res.status(200).json({
+              message: "Successfully authenticated user",
+              token: token,
+              userId: user._id,
+            });
+          } else {
+            // Incorrect password
+            return res.status(401).json({
+              message: "Failed to authenticate user",
+            });
+          }
         });
       }
+      console.log("run after");
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({
+      return res.status(500).json({
         error: err,
       });
     });
 };
-
-// exports.user_delete = (req, res, next) => {
-//   const userId = req.params.userId;
-//   User.findByIdAndRemove(userId)
-//     .exec()
-//     .then((result) => {
-//       if (!result) {
-//         res.status(404).json({
-//           message: "No valid entry found for provided ID.",
-//         });
-//       } else {
-//         res.status(200).json({
-//           message: "Successfully removed user",
-//           // user: result,
-//         });
-//       }
-//     })
-//     .catch((err) => {
-//       res.status(500).json({
-//         error: err,
-//       });
-//     });
-// };
