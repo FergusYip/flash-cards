@@ -33,29 +33,44 @@ exports.cards_get_all = (req, res, next) => {
     });
 };
 
-exports.cards_create_card = (req, res, next) => {
-  const card = new Card({
-    _id: new mongoose.Types.ObjectId(),
-    prompt: req.body.prompt,
-    answer: req.body.answer,
-  });
+const CardService = require("../services/cards-service");
 
-  card
-    .save()
-    .then((result) => {
-      console.log(result);
-      res.status(200).json({
-        message: "Created new card successfully",
-        card: card,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        error: err,
-      });
-    });
+exports.cards_create_card = async (req, res, next) => {
+  const userId = req.tokenPayload.userId;
+  const stackId = req.params.stackId;
+  const { prompt, answer } = req.body;
+  try {
+    await CardService.createCard(userId, stackId, prompt, answer);
+    res.status(201).json({ message: "created card using service" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err });
+  }
 };
+
+// exports.cards_create_card = (req, res, next) => {
+//   const card = new Card({
+//     _id: new mongoose.Types.ObjectId(),
+//     prompt: req.body.prompt,
+//     answer: req.body.answer,
+//   });
+
+//   card
+//     .save()
+//     .then((result) => {
+//       console.log(result);
+//       res.status(200).json({
+//         message: "Created new card successfully",
+//         card: card,
+//       });
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.status(500).json({
+//         error: err,
+//       });
+//     });
+// };
 
 exports.cards_get_card = (req, res, next) => {
   const id = req.params.cardId;
