@@ -21,7 +21,8 @@ exports.auth_register = (req, res, next) => {
     .then((hash) => {
       const defaultStack = new Stack({
         _id: new mongoose.Types.ObjectId(),
-        name: "(default)",
+        name: "sys_default",
+        default: true,
       });
       defaultStack
         .save()
