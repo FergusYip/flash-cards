@@ -40,24 +40,21 @@ exports.user_set_email = (req, res, next) => {
   )
     .exec()
     .then((user) => {
+      const userDetails = {
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+      };
       if (user) {
         // if (user.email == newEmail) {
         //   return res.status(400).json({
         //     message: "New email is the same as the current email",
-        //     user: {
-        //       userId: user._id,
-        //       name: user.name,
-        //       email: user.email,
-        //     },
+        //     user: userDetails,
         //   });
         // }
         return res.status(200).json({
           message: "Successfully updated email",
-          user: {
-            userId: user._id,
-            name: user.name,
-            email: user.email,
-          },
+          user: userDetails,
         });
       } else {
         return res.status(404).json({
@@ -84,24 +81,21 @@ exports.user_set_name = (req, res, next) => {
   )
     .exec()
     .then((user) => {
+      const userDetails = {
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+      };
       if (user) {
         // if (user.name == newName) {
         //   return res.status(400).json({
         //     message: "New name is the same as the current name",
-        //     user: {
-        //       userId: user._id,
-        //       name: user.name,
-        //       email: user.email,
-        //     },
+        //     user: userDetails,
         //   });
         // }
         return res.status(200).json({
           message: "Successfully updated name",
-          user: {
-            userId: user._id,
-            name: user.name,
-            email: user.email,
-          },
+          user: userDetails,
         });
       } else {
         return res.status(404).json({
