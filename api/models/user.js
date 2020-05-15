@@ -10,8 +10,23 @@ const userSchema = mongoose.Schema({
   },
   password: { type: String, required: true },
   name: { type: String, required: true },
-  cards: [{ type: mongoose.Schema.Types.ObjectId, ref: "Card" }],
-  stacks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Stack" }],
+  cards: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Card",
+    },
+  ],
+  stacks: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Stack",
+    },
+  ],
+  defaultStack: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Stack",
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);
