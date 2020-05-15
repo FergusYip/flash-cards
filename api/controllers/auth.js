@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
-exports.user_signup = (req, res, next) => {
+exports.auth_register = (req, res, next) => {
   const email = req.body.email;
   User.findOne({ email: email })
     .exec()
@@ -42,7 +42,7 @@ exports.user_signup = (req, res, next) => {
     });
 };
 
-exports.user_login = (req, res, next) => {
+exports.auth_login = (req, res, next) => {
   const email = req.body.email;
   User.findOne({ email: email })
     .exec()
@@ -56,8 +56,8 @@ exports.user_login = (req, res, next) => {
         });
       }
     })
-    .then((result) => {
-      if (result) {
+    .then((user) => {
+      if (user) {
         const token = jwt.sign(
           {
             email: email,
@@ -81,31 +81,32 @@ exports.user_login = (req, res, next) => {
       }
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).json({
         error: err,
       });
     });
 };
 
-exports.user_delete = (req, res, next) => {
-  const userId = req.params.userId;
-  User.findByIdAndRemove(userId)
-    .exec()
-    .then((result) => {
-      if (!result) {
-        res.status(404).json({
-          message: "No valid entry found for provided ID.",
-        });
-      } else {
-        res.status(200).json({
-          message: "Successfully removed user",
-          // user: result,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).json({
-        error: err,
-      });
-    });
-};
+// exports.user_delete = (req, res, next) => {
+//   const userId = req.params.userId;
+//   User.findByIdAndRemove(userId)
+//     .exec()
+//     .then((result) => {
+//       if (!result) {
+//         res.status(404).json({
+//           message: "No valid entry found for provided ID.",
+//         });
+//       } else {
+//         res.status(200).json({
+//           message: "Successfully removed user",
+//           // user: result,
+//         });
+//       }
+//     })
+//     .catch((err) => {
+//       res.status(500).json({
+//         error: err,
+//       });
+//     });
+// };
