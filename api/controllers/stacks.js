@@ -140,7 +140,8 @@ exports.stacks_patch_stack = (req, res, next) => {
 exports.stacks_delete_stack = (req, res, next) => {
   const stackId = req.params.stackId;
   const userId = req.tokenPayload.userId;
-  Stack.findByIdAndDelete(stackId)
+
+  Stack.findById(stackId)
     .exec()
     .then((stack) => {
       if (!stack) {
@@ -148,16 +149,23 @@ exports.stacks_delete_stack = (req, res, next) => {
           stackId: stackId,
           error: "No valid entry found for provided stackId.",
         });
+      } else if (stack.default == true) {
+        return res.status(400).json({
+          error: "Unable to delete default stack",
+        });
+      } else {
+        return Stack.deleteOne({ _id: stackId });
       }
-      User.update({ _id: userId }, { $pull: { stacks: stackId } }).then(
-        (result) => {
-          res.status(200).json({
-            message: "Successfully deleted stack",
-            stack: stack,
-            // result: result,
-          });
-        }
-      );
+    })
+    .then(() => {
+      return User.update({ _id: userId }, { $pull: { stacks: stackId } });
+    })
+    .then((result) => {
+      res.status(200).json({
+        message: "Successfully deleted stack",
+        stack: stack,
+        // result: result,
+      });
     })
     .catch((err) => {
       console.log(err);
