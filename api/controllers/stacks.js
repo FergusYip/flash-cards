@@ -254,3 +254,77 @@ exports.stacks_remove_card = (req, res, next) => {
       });
     });
 };
+
+// Add multiple cards to the stack
+exports.stacks_add_cards = (req, res, next) => {
+  const stackId = req.params.stackId;
+  const cardIds = req.body.cardIds;
+
+  Card.find({ _id: { $in: cardIds } })
+    .exec()
+    .then((result) => {
+      const resultIds = result.map((card) => card._id.toString());
+      const invalidIds = cardIds.filter(
+        (cardId) => resultIds.includes(cardId) == false
+      );
+      if (invalidIds.length) {
+        return res.status(400).json({
+          cardIds: invalidIds,
+          error: "No valid entry found for the provided cardId(s).",
+        });
+      }
+      console.log(typeof resultIds[0]);
+      return Stack.findByIdAndUpdate(
+        stackId,
+        {
+          $addToSet: { cards: { $each: resultIds } },
+        },
+        { new: true }
+      )
+        .select("_id name cards")
+        .exec();
+    })
+    .then((stack) => {
+      return res.status(200).json({
+        message:
+          "Successfully added " + cardIds.length + " cards to the stack.",
+        stack: stack.transform(),
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).json({
+        error: err,
+      });
+    });
+
+  // Card.findById(cardID)
+  //   .then((doc) => {
+  //     if (doc) {
+  //       return Stack.update(
+  //         { _id: id },
+  //         {
+  //           $addToSet: { cards: doc._id },
+  //         }
+  //       );
+  //     } else {
+  //       return res.status(400).json({
+  //         cardID: cardID,
+  //         error: "No valid entry found for provided ID.",
+  //       });
+  //     }
+  //   })
+  //   .then((result) => {
+  //     return res.status(200).json({
+  //       message: "Successfully added card to stack",
+  //       // result: result,
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //     res.status(500).json({
+  //       cardID: cardID,
+  //       error: err,
+  //     });
+  //   });
+};

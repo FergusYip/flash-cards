@@ -25,4 +25,6 @@ router.delete(
   StacksController.stacks_remove_card
 );
 
+router.post("/:stackId/add_many", checkAuth, StacksController.stacks_add_cards);
+
 module.exports = router;
