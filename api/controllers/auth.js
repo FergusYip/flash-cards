@@ -88,7 +88,6 @@ exports.auth_login = (req, res, next) => {
                 expiresIn: "1h",
               }
             );
-            console.log(user);
             return res.status(200).json({
               message: "Successfully authenticated user",
               token: token,
@@ -102,7 +101,6 @@ exports.auth_login = (req, res, next) => {
           }
         });
       }
-      console.log("run after");
     })
     .catch((err) => {
       console.log(err);
