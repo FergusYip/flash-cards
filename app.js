@@ -60,11 +60,4 @@ app.use((error, req, res, next) => {
   });
 });
 
-// First Tutorial
-// app.use((req, res, next) => {
-//     res.status(200).json({
-//         message: 'Hello'
-//     });
-// })
-
 module.exports = app;
