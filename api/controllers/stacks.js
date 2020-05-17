@@ -179,57 +179,106 @@ exports.stacks_safe_delete = (req, res, next) => {
   const stackId = req.params.stackId;
   const userId = req.tokenPayload.userId;
 
-  Stack.findById(stackId)
-    .select("_id name cards")
-    .exec()
-    .then((stack) => {
+  Promise.all([
+    Stack.findById(stackId).select("_id name cards").exec(),
+    User.findByIdAndUpdate(userId, { $pull: { stacks: stackId } }).exec(),
+  ])
+    .then((result) => {
+      const stack = result[0];
+      const user = result[1];
+
       if (!stack) {
         return res.status(400).json({
           stackId: stackId,
           error: "No valid entry found for provided stackId.",
         });
-      } else if (stack.default == true) {
+      }
+
+      if (stack.default == true) {
         return res.status(400).json({
           error: "Unable to delete default stack",
         });
-      } else {
-        User.findByIdAndUpdate(userId, { $pull: { stacks: stackId } })
-          .exec()
-          .then((user) => {
-            if (!user) {
-              return res.status(400).json({
-                userId: userId,
-                error: "No valid entry found for provided userId.",
-              });
-            }
-            return Stack.updateOne(
-              { _id: user.defaultStack },
-              { $addToSet: { cards: { $each: stack.cards } } }
-            );
-          })
-          .then(() => {
-            return Stack.deleteOne({ _id: stackId });
-          })
-          .catch((err) => {
-            console.log(err);
-            res.status(500).json({
-              error: err,
-            });
-          });
-        console.log(stack);
-        return res.status(200).json({
-          message:
-            "Successfully deleted stack and moved cards to default stack",
-          stack: stack.transform(),
+      }
+
+      if (!user) {
+        return res.status(400).json({
+          userId: userId,
+          error: "No valid entry found for provided userId.",
         });
       }
+
+      return Promise.all([
+        Stack.updateOne(
+          { _id: user.defaultStack },
+          { $addToSet: { cards: { $each: stack.cards } } }
+        ),
+        Stack.deleteOne({ _id: stackId }),
+      ]);
+    })
+    .then((result) => {
+      return res.status(200).json({
+        message: "Successfully deleted stack and moved cards to default stack",
+        stack: stack.transform(),
+      });
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({
+      return res.status(500).json({
         error: err,
       });
     });
+
+  //   Stack.findById(stackId)
+  //     .select("_id name cards")
+  //     .exec()
+  //     .then((stack) => {
+  //       if (!stack) {
+  //         return res.status(400).json({
+  //           stackId: stackId,
+  //           error: "No valid entry found for provided stackId.",
+  //         });
+  //       } else if (stack.default == true) {
+  //         return res.status(400).json({
+  //           error: "Unable to delete default stack",
+  //         });
+  //       } else {
+  //         User.findByIdAndUpdate(userId, { $pull: { stacks: stackId } })
+  //           .exec()
+  //           .then((user) => {
+  //             if (!user) {
+  //               return res.status(400).json({
+  //                 userId: userId,
+  //                 error: "No valid entry found for provided userId.",
+  //               });
+  //             }
+  //             return Stack.updateOne(
+  //               { _id: user.defaultStack },
+  //               { $addToSet: { cards: { $each: stack.cards } } }
+  //             );
+  //           })
+  //           .then(() => {
+  //             return Stack.deleteOne({ _id: stackId });
+  //           })
+  //           .catch((err) => {
+  //             console.log(err);
+  //             res.status(500).json({
+  //               error: err,
+  //             });
+  //           });
+  //         console.log(stack);
+  //         return res.status(200).json({
+  //           message:
+  //             "Successfully deleted stack and moved cards to default stack",
+  //           stack: stack.transform(),
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       res.status(500).json({
+  //         error: err,
+  //       });
+  //     });
 };
 
 // Add a card to the stack
