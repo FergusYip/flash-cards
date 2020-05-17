@@ -54,7 +54,7 @@ exports.stacks_create_stack = (req, res, next) => {
   stack
     .save()
     .then((result) => {
-      return User.update(
+      return User.updateOne(
         { _id: userId },
         {
           $addToSet: { stacks: result._id },
@@ -118,7 +118,7 @@ exports.stacks_patch_stack = (req, res, next) => {
     updateOps[ops.propName] = ops.value;
   }
   console.log(updateOps);
-  Stack.update(
+  Stack.updateOne(
     { _id: id },
     {
       $set: updateOps,
@@ -158,7 +158,7 @@ exports.stacks_delete_stack = (req, res, next) => {
       }
     })
     .then(() => {
-      return User.update({ _id: userId }, { $pull: { stacks: stackId } });
+      return User.updateOne({ _id: userId }, { $pull: { stacks: stackId } });
     })
     .then((result) => {
       res.status(200).json({
@@ -166,6 +166,63 @@ exports.stacks_delete_stack = (req, res, next) => {
         stack: stack,
         // result: result,
       });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+};
+
+exports.stacks_safe_delete = (req, res, next) => {
+  const stackId = req.params.stackId;
+  const userId = req.tokenPayload.userId;
+
+  Stack.findById(stackId)
+    .select("_id name cards")
+    .exec()
+    .then((stack) => {
+      if (!stack) {
+        return res.status(400).json({
+          stackId: stackId,
+          error: "No valid entry found for provided stackId.",
+        });
+      } else if (stack.default == true) {
+        return res.status(400).json({
+          error: "Unable to delete default stack",
+        });
+      } else {
+        User.findByIdAndUpdate(userId, { $pull: { stacks: stackId } })
+          .exec()
+          .then((user) => {
+            if (!user) {
+              return res.status(400).json({
+                userId: userId,
+                error: "No valid entry found for provided userId.",
+              });
+            }
+            return Stack.updateOne(
+              { _id: user.defaultStack },
+              { $addToSet: { cards: { $each: stack.cards } } }
+            );
+          })
+          .then(() => {
+            return Stack.deleteOne({ _id: stackId });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({
+              error: err,
+            });
+          });
+        console.log(stack);
+        return res.status(200).json({
+          message:
+            "Successfully deleted stack and moved cards to default stack",
+          stack: stack.transform(),
+        });
+      }
     })
     .catch((err) => {
       console.log(err);
@@ -183,7 +240,7 @@ exports.stacks_add_card = (req, res, next) => {
   Card.findById(cardID)
     .then((doc) => {
       if (doc) {
-        return Stack.update(
+        return Stack.updateOne(
           { _id: id },
           {
             $addToSet: { cards: doc._id },
@@ -220,7 +277,7 @@ exports.stacks_remove_card = (req, res, next) => {
   Card.findById(cardID)
     .then((doc) => {
       if (doc) {
-        return Stack.update(
+        return Stack.updateOne(
           { _id: id },
           {
             $pull: { cards: doc._id },
@@ -273,7 +330,6 @@ exports.stacks_add_cards = (req, res, next) => {
           error: "No valid entry found for the provided cardId(s).",
         });
       }
-      console.log(typeof resultIds[0]);
       return Stack.findByIdAndUpdate(
         stackId,
         {
@@ -297,34 +353,4 @@ exports.stacks_add_cards = (req, res, next) => {
         error: err,
       });
     });
-
-  // Card.findById(cardID)
-  //   .then((doc) => {
-  //     if (doc) {
-  //       return Stack.update(
-  //         { _id: id },
-  //         {
-  //           $addToSet: { cards: doc._id },
-  //         }
-  //       );
-  //     } else {
-  //       return res.status(400).json({
-  //         cardID: cardID,
-  //         error: "No valid entry found for provided ID.",
-  //       });
-  //     }
-  //   })
-  //   .then((result) => {
-  //     return res.status(200).json({
-  //       message: "Successfully added card to stack",
-  //       // result: result,
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //     res.status(500).json({
-  //       cardID: cardID,
-  //       error: err,
-  //     });
-  //   });
 };

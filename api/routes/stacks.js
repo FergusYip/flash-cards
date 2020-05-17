@@ -15,7 +15,9 @@ router.get("/:stackId", checkAuth, StacksController.stacks_get_stack);
 
 router.patch("/:stackId", checkAuth, StacksController.stacks_patch_stack);
 
-router.delete("/:stackId", checkAuth, StacksController.stacks_delete_stack);
+// router.delete("/:stackId", checkAuth, StacksController.stacks_delete_stack);
+
+router.delete("/:stackId", checkAuth, StacksController.stacks_safe_delete);
 
 router.post("/:stackId/add", checkAuth, StacksController.stacks_add_card);
 

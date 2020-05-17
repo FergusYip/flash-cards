@@ -119,7 +119,7 @@ exports.cards_patch_card = (req, res, next) => {
     updateOps[ops.propName] = ops.value;
   }
   console.log(updateOps);
-  Card.update(
+  Card.updateOne(
     { _id: id },
     {
       $set: updateOps,
