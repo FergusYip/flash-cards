@@ -12,6 +12,8 @@ const stackRoutes = require("./api/routes/stacks");
 mongoose.connect(process.env.MONGO_ATLAS_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
 });
 
 let db = mongoose.connection;
