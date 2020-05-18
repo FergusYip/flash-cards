@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan"); // Logging package
@@ -12,6 +13,8 @@ const stackRoutes = require("./api/routes/stacks");
 mongoose.connect(process.env.MONGO_ATLAS_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
 });
 
 let db = mongoose.connection;
@@ -56,12 +59,5 @@ app.use((error, req, res, next) => {
     },
   });
 });
-
-// First Tutorial
-// app.use((req, res, next) => {
-//     res.status(200).json({
-//         message: 'Hello'
-//     });
-// })
 
 module.exports = app;

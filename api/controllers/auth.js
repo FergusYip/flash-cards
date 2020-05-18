@@ -1,3 +1,4 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -21,7 +22,8 @@ exports.auth_register = (req, res, next) => {
     .then((hash) => {
       const defaultStack = new Stack({
         _id: new mongoose.Types.ObjectId(),
-        name: "(default)",
+        name: "sys_default",
+        default: true,
       });
       defaultStack
         .save()
@@ -86,7 +88,6 @@ exports.auth_login = (req, res, next) => {
                 expiresIn: "1h",
               }
             );
-            console.log(user);
             return res.status(200).json({
               message: "Successfully authenticated user",
               token: token,
@@ -100,7 +101,6 @@ exports.auth_login = (req, res, next) => {
           }
         });
       }
-      console.log("run after");
     })
     .catch((err) => {
       console.log(err);
