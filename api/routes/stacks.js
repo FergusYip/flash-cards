@@ -23,7 +23,11 @@ router.delete(
   StacksController.deleteStackSafeController
 );
 
-router.post("/:stackId/add", checkAuth, StacksController.stacks_add_card);
+router.post(
+  "/:stackId/add",
+  checkAuth,
+  StacksController.addCardToStackController
+);
 
 router.delete(
   "/:stackID/remove",

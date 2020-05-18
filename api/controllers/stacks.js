@@ -145,6 +145,21 @@ exports.deleteStackSafeController = async (req, res, next) => {
   }
 };
 
+exports.addCardToStackController = async (req, res, next) => {
+  const stackId = req.params.stackId;
+  const cardId = req.body.cardId;
+
+  try {
+    const response = await stackService.addCardToStackService(stackId, cardId);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
 // Add a card to the stack
 exports.stacks_add_card = (req, res, next) => {
   const id = req.params.stackId;

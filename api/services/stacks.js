@@ -101,3 +101,23 @@ exports.deleteStackSafeService = async (userId, stackId) => {
     throw new Error(err.message);
   }
 };
+
+exports.addCardToStackService = async (stackId, cardId) => {
+  try {
+    // Check if card is valid
+    await cardDb.getCardDB(cardId);
+
+    const stack = await stackDb.addCardsToStackDB(stackId, [cardId]);
+
+    return {
+      message: "Successfully added card to stack.",
+      stack: {
+        stackId: stack.stackId,
+        name: stack.name,
+        cards: stack.cards,
+      },
+    };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
