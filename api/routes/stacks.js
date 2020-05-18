@@ -13,6 +13,8 @@ router.post("/", checkAuth, StacksController.createStackController);
 
 router.get("/:stackId", checkAuth, StacksController.getStackController);
 
+router.put("/:stackId", checkAuth, StacksController.setStackNameController);
+
 router.patch("/:stackId", checkAuth, StacksController.stacks_patch_stack);
 
 // router.delete("/:stackId", checkAuth, StacksController.stacks_delete_stack);

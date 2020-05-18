@@ -4,7 +4,7 @@ const stackSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   name: { type: String, required: true },
   cards: [{ type: mongoose.Schema.Types.ObjectId, ref: "Card" }],
-  default: { type: Boolean, default: false },
+  default: { type: Boolean, default: false, required: true },
 });
 
 stackSchema.method("transform", function () {

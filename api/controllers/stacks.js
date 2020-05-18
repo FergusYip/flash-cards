@@ -69,6 +69,29 @@ exports.getStackController = async (req, res, next) => {
   }
 };
 
+exports.setStackNameController = async (req, res, next) => {
+  const stackId = req.params.stackId;
+  const name = req.body.name;
+
+  if (!name) {
+    return res.status(400).json({
+      error: "Incorrect parameters",
+      expected: ["name"],
+      recieved: Object.keys(req.body),
+    });
+  }
+
+  try {
+    const response = await stackService.setStackNameService(stackId, name);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
 exports.stacks_patch_stack = (req, res, next) => {
   const id = req.params.stackId;
   const updateOps = {};
