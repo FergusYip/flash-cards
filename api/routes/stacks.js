@@ -15,11 +15,13 @@ router.get("/:stackId", checkAuth, StacksController.getStackController);
 
 router.put("/:stackId", checkAuth, StacksController.setStackNameController);
 
-router.patch("/:stackId", checkAuth, StacksController.stacks_patch_stack);
-
 // router.delete("/:stackId", checkAuth, StacksController.stacks_delete_stack);
 
-router.delete("/:stackId", checkAuth, StacksController.stacks_safe_delete);
+router.delete(
+  "/:stackId",
+  checkAuth,
+  StacksController.deleteStackSafeController
+);
 
 router.post("/:stackId/add", checkAuth, StacksController.stacks_add_card);
 

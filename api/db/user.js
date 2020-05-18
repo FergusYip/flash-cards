@@ -9,6 +9,10 @@ exports.getUser = async (userId) => {
     .populate("stacks defaultStack", "name cards _id")
     .exec();
 
+  if (!user) {
+    throw new Error("No valid entry for provided userId.");
+  }
+
   return {
     userId: user._id,
     cards: user.cards,

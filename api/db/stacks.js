@@ -50,7 +50,7 @@ exports.setStackNameDB = async (stackId, name) => {
     .exec();
 
   if (!stack) {
-    throw new Error("No valid entry found for provided ID.");
+    throw new Error("No valid entry found for provided stackId.");
   }
 
   return {
@@ -58,4 +58,32 @@ exports.setStackNameDB = async (stackId, name) => {
     name: stack.name,
     cards: stack.cards.map((card) => card.transform()),
   };
+};
+
+exports.deleteStackDB = async (stackId) => {
+  const stack = await Stack.findByIdAndDelete(stackId).exec();
+
+  if (!stack) {
+    throw new Error("No valid entry found for provided stackId.");
+  }
+
+  return {
+    stackId: stack._id,
+    name: stack.name,
+    cards: stack.cards,
+  };
+};
+
+exports.addCardsToStackDB = async (stackId, cardIds) => {
+  const stack = await Stack.findByIdAndUpdate(
+    stackId,
+    {
+      $addToSet: { cards: { $each: cardIds } },
+    },
+    { new: true }
+  )
+    .select("_id name cards")
+    .exec();
+
+  return stack.transform();
 };

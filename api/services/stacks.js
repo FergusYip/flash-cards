@@ -60,7 +60,6 @@ exports.getStackService = async (stackId) => {
 exports.setStackNameService = async (stackId, name) => {
   try {
     const stack = await stackDb.getStackDB(stackId);
-    console.log(stack);
 
     if (stack.default) {
       throw new Error("Unable to rename default stack.");
@@ -70,6 +69,33 @@ exports.setStackNameService = async (stackId, name) => {
     return {
       message: "Successfully updated stack name to " + name,
       stack: updatedStack,
+    };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+exports.deleteStackSafeService = async (userId, stackId) => {
+  try {
+    const user = await userDb.getUser(userId);
+    const stack = await stackDb.getStackDB(stackId);
+
+    if (stack.default) {
+      throw new Error("Unable to delete default stack.");
+    }
+
+    const cardIds = stack.cards.map((card) => card.cardId);
+
+    await stackDb.addCardsToStackDB(user.defaultStack.stackId, cardIds);
+    await stackDb.deleteStackDB(stackId);
+
+    return {
+      message: "Successfully deleted stack and moved cards to default stack",
+      stack: {
+        stackId: stack.stackId,
+        name: stack.name,
+        cards: stack.cards,
+      },
     };
   } catch (err) {
     throw new Error(err.message);
