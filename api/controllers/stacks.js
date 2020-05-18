@@ -4,25 +4,41 @@ const Card = require("../models/cards");
 const Stack = require("../models/stacks");
 const User = require("../models/user");
 
-exports.stacks_get_all = (req, res, next) => {
-  Stack.find()
-    // .select("_id prompt answer")
-    .exec()
-    .then((docs) => {
-      const response = {
-        count: docs.length,
-        stacks: docs,
-      };
-      console.log(docs);
-      res.status(200).json(response);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        error: err,
-      });
+const stackService = require("../services/stacks");
+
+exports.stacks_get_all = async (req, res, next) => {
+  try {
+    const stacks = await stackService.getStacks();
+    return res.status(200).json({
+      stacks: stacks,
     });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
 };
+
+// exports.stacks_get_all = (req, res, next) => {
+//   Stack.find()
+//     // .select("_id prompt answer")
+//     .exec()
+//     .then((docs) => {
+//       const response = {
+//         count: docs.length,
+//         stacks: docs,
+//       };
+//       console.log(docs);
+//       res.status(200).json(response);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.status(500).json({
+//         error: err,
+//       });
+//     });
+// };
 
 exports.stacks_get_stacks = (req, res, next) => {
   const userId = req.tokenPayload.userId;
