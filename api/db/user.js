@@ -17,3 +17,15 @@ exports.getUser = async (userId) => {
     defaultStack: user.defaultStack.transform(),
   };
 };
+
+exports.addStackDB = async (userId, stackId) => {
+  const user = await User.updateOne(
+    { _id: userId },
+    {
+      $addToSet: { stacks: stackId },
+    }
+  );
+  if (!user.nModified) {
+    throw new Error("Failed to update user");
+  }
+};

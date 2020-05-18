@@ -9,9 +9,9 @@ router.get("/all", StacksController.getAllStacksController);
 
 router.get("/", checkAuth, StacksController.getUserStacksController);
 
-router.post("/", checkAuth, StacksController.stacks_create_stack);
+router.post("/", checkAuth, StacksController.createStackController);
 
-router.get("/:stackId", checkAuth, StacksController.stacks_get_stack);
+router.get("/:stackId", checkAuth, StacksController.getStackController);
 
 router.patch("/:stackId", checkAuth, StacksController.stacks_patch_stack);
 

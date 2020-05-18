@@ -31,72 +31,32 @@ exports.getUserStacksController = async (req, res, next) => {
   }
 };
 
-exports.stacks_create_stack = (req, res, next) => {
+exports.createStackController = async (req, res, next) => {
   const userId = req.tokenPayload.userId;
+  const name = req.body.name;
 
-  const stack = new Stack({
-    _id: new mongoose.Types.ObjectId(),
-    name: req.body.name,
-    cards: [],
-  });
-
-  stack
-    .save()
-    .then((result) => {
-      return User.updateOne(
-        { _id: userId },
-        {
-          $addToSet: { stacks: result._id },
-        }
-      );
-    })
-    .then((result) => {
-      // console.log(result);
-      return res.status(200).json({
-        message: "Created new stack successfully",
-        stack: {
-          stackId: stack._id,
-          name: stack.name,
-          cards: stack.cards,
-        },
-        // result: result,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(500).json({
-        error: err,
-      });
+  try {
+    const response = await stackService.createStackService(userId, name);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
     });
+  }
 };
 
-exports.stacks_get_stack = (req, res, next) => {
-  const id = req.params.stackId;
-  Stack.findById(id)
-    .populate("cards", "_id prompt answer")
-    .exec()
-    .then((stack) => {
-      if (stack) {
-        res.status(200).json({
-          message: "Successfully obtained stack",
-          stack: {
-            stackId: stack._id,
-            name: stack.name,
-            cards: stack.cards.map((card) => card.transform()),
-          },
-        });
-      } else {
-        res.status(404).json({
-          message: "No valid entry found for provided ID.",
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(500).json({
-        error: err,
-      });
+exports.getStackController = async (req, res, next) => {
+  const stackId = req.params.stackId;
+  try {
+    const response = await stackService.getStackService(stackId);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
     });
+  }
 };
 
 exports.stacks_patch_stack = (req, res, next) => {
@@ -216,58 +176,6 @@ exports.stacks_safe_delete = (req, res, next) => {
         error: err,
       });
     });
-
-  //   Stack.findById(stackId)
-  //     .select("_id name cards")
-  //     .exec()
-  //     .then((stack) => {
-  //       if (!stack) {
-  //         return res.status(400).json({
-  //           stackId: stackId,
-  //           error: "No valid entry found for provided stackId.",
-  //         });
-  //       } else if (stack.default == true) {
-  //         return res.status(400).json({
-  //           error: "Unable to delete default stack",
-  //         });
-  //       } else {
-  //         User.findByIdAndUpdate(userId, { $pull: { stacks: stackId } })
-  //           .exec()
-  //           .then((user) => {
-  //             if (!user) {
-  //               return res.status(400).json({
-  //                 userId: userId,
-  //                 error: "No valid entry found for provided userId.",
-  //               });
-  //             }
-  //             return Stack.updateOne(
-  //               { _id: user.defaultStack },
-  //               { $addToSet: { cards: { $each: stack.cards } } }
-  //             );
-  //           })
-  //           .then(() => {
-  //             return Stack.deleteOne({ _id: stackId });
-  //           })
-  //           .catch((err) => {
-  //             console.log(err);
-  //             res.status(500).json({
-  //               error: err,
-  //             });
-  //           });
-  //         console.log(stack);
-  //         return res.status(200).json({
-  //           message:
-  //             "Successfully deleted stack and moved cards to default stack",
-  //           stack: stack.transform(),
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       res.status(500).json({
-  //         error: err,
-  //       });
-  //     });
 };
 
 // Add a card to the stack
