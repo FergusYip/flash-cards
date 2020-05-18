@@ -20,6 +20,7 @@ exports.getAllStacksController = async (req, res, next) => {
 
 exports.getUserStacksController = async (req, res, next) => {
   const userId = req.tokenPayload.userId;
+
   try {
     const response = await stackService.getUserStacksService(userId);
     return res.status(200).json(response);
@@ -35,6 +36,14 @@ exports.createStackController = async (req, res, next) => {
   const userId = req.tokenPayload.userId;
   const name = req.body.name;
 
+  if (!name) {
+    return res.status(400).json({
+      error: "Incorrect parameters",
+      expected: ["name"],
+      recieved: Object.keys(req.body),
+    });
+  }
+
   try {
     const response = await stackService.createStackService(userId, name);
     return res.status(200).json(response);
@@ -48,6 +57,7 @@ exports.createStackController = async (req, res, next) => {
 
 exports.getStackController = async (req, res, next) => {
   const stackId = req.params.stackId;
+
   try {
     const response = await stackService.getStackService(stackId);
     return res.status(200).json(response);
