@@ -5,9 +5,9 @@ const checkAuth = require("../auth/check-auth");
 
 const StacksController = require("../controllers/stacks");
 
-router.get("/all", StacksController.stacks_get_all);
+router.get("/all", StacksController.getAllStacksController);
 
-router.get("/", checkAuth, StacksController.stacks_get_stacks);
+router.get("/", checkAuth, StacksController.getUserStacksController);
 
 router.post("/", checkAuth, StacksController.stacks_create_stack);
 

@@ -6,12 +6,10 @@ const User = require("../models/user");
 
 const stackService = require("../services/stacks");
 
-exports.stacks_get_all = async (req, res, next) => {
+exports.getAllStacksController = async (req, res, next) => {
   try {
-    const stacks = await stackService.getStacks();
-    return res.status(200).json({
-      stacks: stacks,
-    });
+    const response = await stackService.getAllStacksService();
+    return res.status(200).json(response);
   } catch (err) {
     console.log(err);
     return res.status(500).json({
@@ -20,42 +18,17 @@ exports.stacks_get_all = async (req, res, next) => {
   }
 };
 
-// exports.stacks_get_all = (req, res, next) => {
-//   Stack.find()
-//     // .select("_id prompt answer")
-//     .exec()
-//     .then((docs) => {
-//       const response = {
-//         count: docs.length,
-//         stacks: docs,
-//       };
-//       console.log(docs);
-//       res.status(200).json(response);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//       res.status(500).json({
-//         error: err,
-//       });
-//     });
-// };
-
-exports.stacks_get_stacks = (req, res, next) => {
+exports.getUserStacksController = async (req, res, next) => {
   const userId = req.tokenPayload.userId;
-  User.findById(userId)
-    .populate("stacks defaultStack", "name cards _id")
-    .exec()
-    .then((user) => {
-      console.log(user);
-      res.status(400).json({
-        stacks: user.stacks.map((stack) => stack.transform()),
-        defaultStack: user.defaultStack.transform(),
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(500).json({ error: err });
+  try {
+    const response = await stackService.getUserStacksService(userId);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
     });
+  }
 };
 
 exports.stacks_create_stack = (req, res, next) => {
