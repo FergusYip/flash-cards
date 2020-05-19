@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
 const UserController = require("../controllers/user");
 
-router.post("/signup", UserController.user_signup);
+router.get("/:userId", UserController.user_get_details);
 
-router.post("/login", UserController.user_login);
+router.put("/:userId/set_email", UserController.user_set_email);
+
+router.put("/:userId/set_name", UserController.user_set_name);
 
 router.delete("/:userId", UserController.user_delete);
 
