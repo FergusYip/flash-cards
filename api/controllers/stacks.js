@@ -37,17 +37,12 @@ exports.createStackController = async (req, res, next) => {
   const name = req.body.name;
 
   if (!name || typeof name != "string") {
-    let recieved = {};
-    for (const key in req.body) {
-      recieved[key] = typeof req.body[key];
-    }
-
     return res.status(400).json({
       error: "Incorrect parameters",
       expected: {
         name: "string",
       },
-      recieved: recieved,
+      recieved: req.body,
     });
   }
 
@@ -81,17 +76,12 @@ exports.setStackNameController = async (req, res, next) => {
   const name = req.body.name;
 
   if (!name || typeof name != "string") {
-    let recieved = {};
-    for (const key in req.body) {
-      recieved[key] = typeof req.body[key];
-    }
-
     return res.status(400).json({
       error: "Incorrect parameters",
       expected: {
         name: "string",
       },
-      recieved: recieved,
+      recieved: req.body,
     });
   }
 
@@ -125,6 +115,16 @@ exports.addCardController = async (req, res, next) => {
   const stackId = req.params.stackId;
   const cardId = req.body.cardId;
 
+  if (!cardId || typeof cardId != "string") {
+    return res.status(400).json({
+      error: "Incorrect parameters",
+      expected: {
+        cardId: "string",
+      },
+      recieved: req.body,
+    });
+  }
+
   try {
     const response = await stackService.addCardService(stackId, cardId);
     return res.status(200).json(response);
@@ -140,18 +140,13 @@ exports.addCardsController = async (req, res, next) => {
   const stackId = req.params.stackId;
   const cardIds = req.body.cardIds;
 
-  if (!cardIds || typeof cardIds != "array") {
-    let recieved = {};
-    for (const key in req.body) {
-      recieved[key] = typeof req.body[key];
-    }
-
+  if (!cardIds || typeof cardIds != "object") {
     return res.status(400).json({
       error: "Incorrect parameters",
       expected: {
         cardIds: "array",
       },
-      recieved: recieved,
+      recieved: req.body,
     });
   }
 
@@ -186,17 +181,12 @@ exports.removeCardsController = async (req, res, next) => {
   const cardIds = req.body.stackId;
 
   if (!cardIds || typeof cardIds != "array") {
-    let recieved = {};
-    for (const key in req.body) {
-      recieved[key] = typeof req.body[key];
-    }
-
     return res.status(400).json({
       error: "Incorrect parameters",
       expected: {
         cardIds: "array",
       },
-      recieved: recieved,
+      recieved: req.body,
     });
   }
 
