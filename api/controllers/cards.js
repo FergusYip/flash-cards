@@ -88,6 +88,30 @@ exports.cards_create_card = (req, res, next) => {
     });
 };
 
+// exports.cards_create_card = (req, res, next) => {
+//   const card = new Card({
+//     _id: new mongoose.Types.ObjectId(),
+//     prompt: req.body.prompt,
+//     answer: req.body.answer,
+//   });
+
+//   card
+//     .save()
+//     .then((result) => {
+//       console.log(result);
+//       res.status(200).json({
+//         message: "Created new card successfully",
+//         card: card,
+//       });
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.status(500).json({
+//         error: err,
+//       });
+//     });
+// };
+
 exports.cards_get_card = (req, res, next) => {
   const id = req.params.cardId;
 
