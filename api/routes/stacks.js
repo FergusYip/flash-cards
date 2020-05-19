@@ -15,26 +15,30 @@ router.get("/:stackId", checkAuth, StacksController.getStackController);
 
 router.put("/:stackId", checkAuth, StacksController.setStackNameController);
 
-// router.delete("/:stackId", checkAuth, StacksController.stacks_delete_stack);
-
 router.delete(
   "/:stackId",
   checkAuth,
   StacksController.deleteStackSafeController
 );
 
+router.post("/:stackId/add", checkAuth, StacksController.addCardsController);
+
 router.post(
-  "/:stackId/add",
+  "/:stackId/add_many",
   checkAuth,
-  StacksController.addCardToStackController
+  StacksController.addCardsController
 );
 
 router.delete(
   "/:stackID/remove",
   checkAuth,
-  StacksController.stacks_remove_card
+  StacksController.removeCardController
 );
 
-router.post("/:stackId/add_many", checkAuth, StacksController.stacks_add_cards);
+router.post(
+  "/:stackId/remove_many",
+  checkAuth,
+  StacksController.removeCardsController
+);
 
 module.exports = router;

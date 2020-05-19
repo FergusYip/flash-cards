@@ -106,44 +106,6 @@ exports.setStackNameController = async (req, res, next) => {
   }
 };
 
-exports.stacks_delete_stack = (req, res, next) => {
-  const stackId = req.params.stackId;
-  const userId = req.tokenPayload.userId;
-
-  Stack.findById(stackId)
-    .exec()
-    .then((stack) => {
-      if (!stack) {
-        return res.status(400).json({
-          stackId: stackId,
-          error: "No valid entry found for provided stackId.",
-        });
-      } else if (stack.default == true) {
-        return res.status(400).json({
-          error: "Unable to delete default stack",
-        });
-      } else {
-        return Stack.deleteOne({ _id: stackId });
-      }
-    })
-    .then(() => {
-      return User.updateOne({ _id: userId }, { $pull: { stacks: stackId } });
-    })
-    .then((result) => {
-      res.status(200).json({
-        message: "Successfully deleted stack",
-        stack: stack,
-        // result: result,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        error: err,
-      });
-    });
-};
-
 exports.deleteStackSafeController = async (req, res, next) => {
   const stackId = req.params.stackId;
   const userId = req.tokenPayload.userId;
@@ -159,12 +121,12 @@ exports.deleteStackSafeController = async (req, res, next) => {
   }
 };
 
-exports.addCardToStackController = async (req, res, next) => {
+exports.addCardController = async (req, res, next) => {
   const stackId = req.params.stackId;
   const cardId = req.body.cardId;
 
   try {
-    const response = await stackService.addCardToStackService(stackId, cardId);
+    const response = await stackService.addCardService(stackId, cardId);
     return res.status(200).json(response);
   } catch (err) {
     console.log(err);

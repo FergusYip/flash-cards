@@ -74,7 +74,7 @@ exports.deleteStackDB = async (stackId) => {
   };
 };
 
-exports.addCardsToStackDB = async (stackId, cardIds) => {
+exports.addCardsDB = async (stackId, cardIds) => {
   const stack = await Stack.findByIdAndUpdate(
     stackId,
     {

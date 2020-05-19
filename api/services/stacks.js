@@ -1,6 +1,6 @@
 const stackDb = require("../db/stacks");
 const userDb = require("../db/user");
-const cardDb = require("../db/card");
+const cardDb = require("../db/cards");
 
 exports.getAllStacksService = async () => {
   try {
@@ -87,7 +87,7 @@ exports.deleteStackSafeService = async (userId, stackId) => {
 
     const cardIds = stack.cards.map((card) => card.cardId);
 
-    await stackDb.addCardsToStackDB(user.defaultStack.stackId, cardIds);
+    await stackDb.addCardsDB(user.defaultStack.stackId, cardIds);
     await stackDb.deleteStackDB(stackId);
 
     return {
@@ -103,10 +103,10 @@ exports.deleteStackSafeService = async (userId, stackId) => {
   }
 };
 
-exports.addCardToStackService = async (stackId, cardId) => {
+exports.addCardService = async (stackId, cardId) => {
   try {
     const card = await cardDb.getCardDB(cardId);
-    const stack = await stackDb.addCardsToStackDB(stackId, [cardId]);
+    const stack = await stackDb.addCardsDB(stackId, [cardId]);
 
     return {
       message: "Successfully added card to stack.",
@@ -121,7 +121,7 @@ exports.addCardToStackService = async (stackId, cardId) => {
 exports.addCardsService = async (stackId, cardIds) => {
   try {
     const cards = await cardDb.getCardsDB(cardIds);
-    const stack = await stackDb.addCardsToStackDB(stackId, cardIds);
+    const stack = await stackDb.addCardsDB(stackId, cardIds);
 
     return {
       message: "Successfully added " + cardIds.length + "card(s) to stack.",
@@ -151,7 +151,7 @@ exports.removeCardService = async (stackId, cardId) => {
 exports.removeCardsService = async (stackId, cardIds) => {
   try {
     const cards = await cardDb.getCardsDB(cardIds);
-    const stack = await stackDb.addCardsToStackDB(stackId, cardIds);
+    const stack = await stackDb.addCardsDB(stackId, cardIds);
 
     return {
       message: "Successfully removed " + cardIds.length + "card(s) from stack.",
