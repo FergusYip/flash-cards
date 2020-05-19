@@ -21,7 +21,7 @@ router.delete(
   StacksController.deleteStackSafeController
 );
 
-router.post("/:stackId/add", checkAuth, StacksController.addCardsController);
+router.post("/:stackId/add", checkAuth, StacksController.addCardController);
 
 router.post(
   "/:stackId/add_many",
