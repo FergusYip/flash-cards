@@ -36,11 +36,18 @@ exports.createStackController = async (req, res, next) => {
   const userId = req.tokenPayload.userId;
   const name = req.body.name;
 
-  if (!name) {
+  if (!name || typeof name != "string") {
+    let recieved = {};
+    for (const key in req.body) {
+      recieved[key] = typeof req.body[key];
+    }
+
     return res.status(400).json({
       error: "Incorrect parameters",
-      expected: ["name"],
-      recieved: Object.keys(req.body),
+      expected: {
+        name: "string",
+      },
+      recieved: recieved,
     });
   }
 
@@ -73,11 +80,18 @@ exports.setStackNameController = async (req, res, next) => {
   const stackId = req.params.stackId;
   const name = req.body.name;
 
-  if (!name) {
+  if (!name || typeof name != "string") {
+    let recieved = {};
+    for (const key in req.body) {
+      recieved[key] = typeof req.body[key];
+    }
+
     return res.status(400).json({
       error: "Incorrect parameters",
-      expected: ["name"],
-      recieved: Object.keys(req.body),
+      expected: {
+        name: "string",
+      },
+      recieved: recieved,
     });
   }
 
@@ -160,125 +174,77 @@ exports.addCardToStackController = async (req, res, next) => {
   }
 };
 
-// Add a card to the stack
-exports.stacks_add_card = (req, res, next) => {
-  const id = req.params.stackId;
-  const cardID = req.body.cardId;
-
-  Card.findById(cardID)
-    .then((doc) => {
-      if (doc) {
-        return Stack.updateOne(
-          { _id: id },
-          {
-            $addToSet: { cards: doc._id },
-          }
-        );
-      } else {
-        return res.status(400).json({
-          cardID: cardID,
-          error: "No valid entry found for provided ID.",
-        });
-      }
-    })
-    .then((result) => {
-      return res.status(200).json({
-        message: "Successfully added card to stack",
-        // result: result,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        cardID: cardID,
-        error: err,
-      });
-    });
-};
-
-// Remove card from the stack
-// Body = Array of ObjectIDs
-exports.stacks_remove_card = (req, res, next) => {
-  const id = req.params.stackID;
-  const cardID = req.body.cardID;
-
-  Card.findById(cardID)
-    .then((doc) => {
-      if (doc) {
-        return Stack.updateOne(
-          { _id: id },
-          {
-            $pull: { cards: doc._id },
-          }
-        );
-      } else {
-        res.status(400).json({
-          cardID: cardID,
-          error: "No valid entry found for provided ID.",
-        });
-      }
-    })
-    .then((result) => {
-      if (result.nModified == 0) {
-        res.status(400).json({
-          error: "Failed to remove card from stack",
-          result: result,
-        });
-      } else {
-        res.status(200).json({
-          message: "Removed card from stack",
-          result: result,
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        cardID: cardID,
-        error: err,
-      });
-    });
-};
-
-// Add multiple cards to the stack
-exports.stacks_add_cards = (req, res, next) => {
+exports.addCardsController = async (req, res, next) => {
   const stackId = req.params.stackId;
   const cardIds = req.body.cardIds;
 
-  Card.find({ _id: { $in: cardIds } })
-    .exec()
-    .then((result) => {
-      const resultIds = result.map((card) => card._id.toString());
-      const invalidIds = cardIds.filter(
-        (cardId) => resultIds.includes(cardId) == false
-      );
-      if (invalidIds.length) {
-        return res.status(400).json({
-          cardIds: invalidIds,
-          error: "No valid entry found for the provided cardId(s).",
-        });
-      }
-      return Stack.findByIdAndUpdate(
-        stackId,
-        {
-          $addToSet: { cards: { $each: resultIds } },
-        },
-        { new: true }
-      )
-        .select("_id name cards")
-        .exec();
-    })
-    .then((stack) => {
-      return res.status(200).json({
-        message:
-          "Successfully added " + cardIds.length + " cards to the stack.",
-        stack: stack.transform(),
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(500).json({
-        error: err,
-      });
+  if (!cardIds || typeof cardIds != "array") {
+    let recieved = {};
+    for (const key in req.body) {
+      recieved[key] = typeof req.body[key];
+    }
+
+    return res.status(400).json({
+      error: "Incorrect parameters",
+      expected: {
+        cardIds: "array",
+      },
+      recieved: recieved,
     });
+  }
+
+  try {
+    const response = await stackService.addCardsService(stackId, cardIds);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
+exports.removeCardController = async (req, res, next) => {
+  const stackId = req.params.stackId;
+  const cardId = req.body.cardId;
+
+  try {
+    const response = await stackService.removeCardService(stackId, cardId);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
+exports.removeCardsController = async (req, res, next) => {
+  const stackId = req.params.stackId;
+  const cardIds = req.body.stackId;
+
+  if (!cardIds || typeof cardIds != "array") {
+    let recieved = {};
+    for (const key in req.body) {
+      recieved[key] = typeof req.body[key];
+    }
+
+    return res.status(400).json({
+      error: "Incorrect parameters",
+      expected: {
+        cardIds: "array",
+      },
+      recieved: recieved,
+    });
+  }
+
+  try {
+    const response = await stackService.removeCardsService(stackId, cardIds);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
 };

@@ -1,5 +1,6 @@
 const stackDb = require("../db/stacks");
 const userDb = require("../db/user");
+const cardDb = require("../db/card");
 
 exports.getAllStacksService = async () => {
   try {
@@ -104,18 +105,58 @@ exports.deleteStackSafeService = async (userId, stackId) => {
 
 exports.addCardToStackService = async (stackId, cardId) => {
   try {
-    // Check if card is valid
-    await cardDb.getCardDB(cardId);
-
+    const card = await cardDb.getCardDB(cardId);
     const stack = await stackDb.addCardsToStackDB(stackId, [cardId]);
 
     return {
       message: "Successfully added card to stack.",
-      stack: {
-        stackId: stack.stackId,
-        name: stack.name,
-        cards: stack.cards,
-      },
+      card: card,
+      stack: stack,
+    };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+exports.addCardsService = async (stackId, cardIds) => {
+  try {
+    const cards = await cardDb.getCardsDB(cardIds);
+    const stack = await stackDb.addCardsToStackDB(stackId, cardIds);
+
+    return {
+      message: "Successfully added " + cardIds.length + "card(s) to stack.",
+      card: cards,
+      stack: stack,
+    };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+exports.removeCardService = async (stackId, cardId) => {
+  try {
+    const card = await cardDb.getCardDB(cardId);
+    const stack = await stackDb.removeCardsDB(stackId, [cardId]);
+
+    return {
+      message: "Successfully removed card from stack",
+      card: card,
+      stack: stack,
+    };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+exports.removeCardsService = async (stackId, cardIds) => {
+  try {
+    const cards = await cardDb.getCardsDB(cardIds);
+    const stack = await stackDb.addCardsToStackDB(stackId, cardIds);
+
+    return {
+      message: "Successfully removed " + cardIds.length + "card(s) from stack.",
+      card: cards,
+      stack: stack,
     };
   } catch (err) {
     throw new Error(err.message);

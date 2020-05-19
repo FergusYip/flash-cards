@@ -87,3 +87,17 @@ exports.addCardsToStackDB = async (stackId, cardIds) => {
 
   return stack.transform();
 };
+
+exports.removeCardsDB = async (stackId, cardIds) => {
+  const stack = await Stack.findByIdAndUpdate(
+    stackId,
+    {
+      $pull: { cards: { $each: cardIds } },
+    },
+    { new: true }
+  )
+    .select("_id name cards")
+    .exec();
+
+  return stack.transform();
+};
