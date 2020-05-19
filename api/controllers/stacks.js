@@ -1,9 +1,3 @@
-const mongoose = require("mongoose");
-
-const Card = require("../models/cards");
-const Stack = require("../models/stacks");
-const User = require("../models/user");
-
 const stackService = require("../services/stacks");
 
 exports.getAllStacksController = async (req, res, next) => {
