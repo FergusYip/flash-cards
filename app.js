@@ -3,22 +3,11 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan"); // Logging package
 const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
 
 const authRoutes = require("./api/routes/auth");
 const userRoutes = require("./api/routes/user");
 const cardRoutes = require("./api/routes/cards");
 const stackRoutes = require("./api/routes/stacks");
-
-mongoose.connect(process.env.MONGO_ATLAS_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-});
-
-let db = mongoose.connection;
-db.on("error", console.error.bind(console, "Mongooose: Connection error"));
 
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
