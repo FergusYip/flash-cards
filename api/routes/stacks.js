@@ -21,6 +21,12 @@ router.delete(
   StacksController.deleteStackSafeController
 );
 
+router.delete(
+  "/:stackId/unsafe",
+  checkAuth,
+  StacksController.deleteUnsafeController
+);
+
 router.post("/:stackId/add", checkAuth, StacksController.addCardController);
 
 router.post(

@@ -111,6 +111,20 @@ exports.deleteStackSafeController = async (req, res, next) => {
   }
 };
 
+exports.deleteUnsafeController = async (req, res, next) => {
+  const stackId = req.params.stackId;
+
+  try {
+    const response = await stackService.deleteUnsafeService(stackId);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
 exports.addCardController = async (req, res, next) => {
   const stackId = req.params.stackId;
   const cardId = req.body.cardId;

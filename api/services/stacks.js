@@ -103,6 +103,32 @@ exports.deleteStackSafeService = async (userId, stackId) => {
   }
 };
 
+exports.deleteUnsafeService = async (stackId) => {
+  try {
+    const stack = await stackDb.getStackDB(stackId);
+
+    if (stack.default) {
+      throw new Error("Unable to delete default stack.");
+    }
+
+    const cardIds = stack.cards.map((card) => card.cardId);
+
+    await cardDb.deleteCardsDB(cardIds);
+    await stackDb.deleteStackDB(stackId);
+
+    return {
+      message: "Successfully deleted stack and all contained cards.",
+      stack: {
+        stackId: stack.stackId,
+        name: stack.name,
+        cards: stack.cards,
+      },
+    };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 exports.addCardService = async (stackId, cardId) => {
   try {
     const card = await cardDb.getCardDB(cardId);
