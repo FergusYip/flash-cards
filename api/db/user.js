@@ -24,15 +24,15 @@ exports.getUser = async (userId) => {
 
 exports.getUserEmail = async (email) => {
   const user = await User.findOne({ email: email }).exec();
-  return user.transform();
+  if (user) return user.transform();
 };
 
 exports.createUserDB = async (email, password, name, defaultStack) => {
   const user = new User({
     _id: new mongoose.Types.ObjectId(),
     email: email,
-    password: hash,
-    name: req.body.name,
+    password: password,
+    name: name,
     defaultStack: defaultStack,
   });
   await user.save();

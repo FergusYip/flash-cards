@@ -2,19 +2,20 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+const stackDb = require("../db/stacks");
 const userDb = require("../db/user");
 const tokenDb = require("../db/token");
 
 exports.registerService = async (email, password, name) => {
   const exisitingUser = await userDb.getUserEmail(email);
   if (exisitingUser) {
-    throw new Error("Emailed provided is already registered.");
+    throw new Error("Email provided is already registered.");
   }
 
-  const hashedPW = await bcrypt.hash(req.body.password, 10);
+  const hashedPW = await bcrypt.hash(password, 10);
   const defaultStack = await stackDb.createDefaultStackDB();
 
-  const user = await createUserDB(email, hashedPW, name, defaultStack);
+  const user = await userDb.createUserDB(email, hashedPW, name, defaultStack);
 
   return {
     message: "Successfully registered a user",
