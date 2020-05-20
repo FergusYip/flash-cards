@@ -29,4 +29,14 @@ const userSchema = mongoose.Schema({
   },
 });
 
+userSchema.method("transform", function () {
+  let obj = this.toObject();
+
+  //Rename fields
+  obj.userId = obj._id;
+  delete obj._id;
+
+  return obj;
+});
+
 module.exports = mongoose.model("User", userSchema);

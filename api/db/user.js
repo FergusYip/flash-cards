@@ -22,6 +22,11 @@ exports.getUser = async (userId) => {
   };
 };
 
+exports.getUserEmail = async (email) => {
+  const user = await User.findOne({ email: email }).exec();
+  return user.transform();
+};
+
 exports.addStackDB = async (userId, stackId) => {
   const user = await User.updateOne(
     { _id: userId },
