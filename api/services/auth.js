@@ -44,7 +44,7 @@ exports.authenticateService = async (email, password) => {
     const accessToken = generateAccessToken(email, user.userId);
     const refreshToken = generateRefreshToken(email, user.userId);
 
-    await addTokenDB(refreshToken);
+    await tokenDb.addTokenDB(refreshToken);
 
     return {
       message: "Successfully authenticated user",
