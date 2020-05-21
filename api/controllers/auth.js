@@ -3,13 +3,7 @@ const authService = require("../services/auth");
 exports.registerController = async (req, res, next) => {
   const { email, password, name } = req.body;
 
-  const input = [email, password, name];
-  const inputTypes = input.map((element) => typeof element);
-
-  if (
-    inputTypes.some((x) => x == "undefined") ||
-    !inputTypes.every((x) => x == "string")
-  ) {
+  if (![email, password, name].every((x) => typeof x == "string")) {
     return res.status(400).json({
       error: "Incorrect parameters",
       expected: {
@@ -34,13 +28,8 @@ exports.registerController = async (req, res, next) => {
 
 exports.loginController = async (req, res, next) => {
   const { email, password } = req.body;
-  const input = [email, password];
-  const inputTypes = input.map((x) => typeof x);
 
-  if (
-    inputTypes.some((x) => x == "undefined") ||
-    !inputTypes.every((x) => x == "string")
-  ) {
+  if (![email, password].every((x) => typeof x == "string")) {
     return res.status(400).json({
       error: "Incorrect parameters",
       expected: {
