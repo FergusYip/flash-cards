@@ -22,6 +22,22 @@ exports.getUser = async (userId) => {
   };
 };
 
+exports.getUserEmail = async (email) => {
+  const user = await User.findOne({ email: email }).exec();
+  if (user) return user.transform();
+};
+
+exports.createUserDB = async (email, password, name, defaultStack) => {
+  const user = new User({
+    _id: new mongoose.Types.ObjectId(),
+    email: email,
+    password: password,
+    name: name,
+    defaultStack: defaultStack,
+  });
+  await user.save();
+  return user.transform();
+};
 exports.addStackDB = async (userId, stackId) => {
   const user = await User.updateOne(
     { _id: userId },

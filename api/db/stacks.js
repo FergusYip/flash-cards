@@ -101,3 +101,12 @@ exports.removeCardsDB = async (stackId, cardIds) => {
 
   return stack.transform();
 };
+
+exports.createDefaultStackDB = async () => {
+  const defaultStack = new Stack({
+    _id: new mongoose.Types.ObjectId(),
+    name: "sys_default",
+    default: true,
+  });
+  return await defaultStack.save();
+};
