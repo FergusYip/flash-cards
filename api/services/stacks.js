@@ -177,7 +177,7 @@ exports.removeCardService = async (stackId, cardId) => {
 exports.removeCardsService = async (stackId, cardIds) => {
   try {
     const cards = await cardDb.getCardsDB(cardIds);
-    const stack = await stackDb.addCardsDB(stackId, cardIds);
+    const stack = await stackDb.removeCardsDB(stackId, cardIds);
 
     return {
       message: "Successfully removed " + cardIds.length + "card(s) from stack.",

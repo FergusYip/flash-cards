@@ -72,3 +72,9 @@ exports.deleteCardDB = async (cardId) => {
 
   return card.transform();
 };
+
+exports.deleteCardsDB = async (cardIds) => {
+  const cards = await Card.find({ _id: cardIds }).exec();
+  await Card.deleteMany({ _id: { $each: cardIds } });
+  return cards.map((card) => card.transform());
+};
