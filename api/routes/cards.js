@@ -7,7 +7,7 @@ const CardsController = require("../controllers/cards");
 
 router.get("/", CardsController.getAllCardsController);
 
-router.post("/", checkAuth, CardsController.createCardsController);
+router.post("/", checkAuth, CardsController.createCardController);
 
 router.get("/:cardId", checkAuth, CardsController.getCardController);
 

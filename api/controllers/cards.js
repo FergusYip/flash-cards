@@ -12,7 +12,7 @@ exports.getAllCardsController = async (req, res, next) => {
   }
 };
 
-exports.createCardService = async (req, res, next) => {
+exports.createCardController = async (req, res, next) => {
   const userId = req.tokenPayload.userId;
   const { prompt, answer, stackId } = req.body;
 
@@ -32,7 +32,7 @@ exports.createCardService = async (req, res, next) => {
   }
 
   try {
-    const response = await cardService.createCardsService(
+    const response = await cardService.createCardService(
       userId,
       prompt,
       answer,

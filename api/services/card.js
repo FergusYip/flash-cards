@@ -22,7 +22,7 @@ exports.createCardService = async (userId, prompt, answer, stackId) => {
       stackId = user.defaultStack.stackId;
     }
 
-    await userDb.addCardDB(userId, card.cardId, stackId);
+    await stackDb.addCardsDB(stackId, [card.cardId]);
 
     return {
       message: "Created new card successfully",
@@ -59,7 +59,7 @@ exports.setCardPromptService = async (cardId, prompt) => {
 
 exports.setCardAnswerService = async (cardId, answer) => {
   try {
-    const card = await cardDb.setCardPromptDB(cardId, answer);
+    const card = await cardDb.setCardAnswerDB(cardId, answer);
     return {
       message: "Successfully updated card answer to " + answer,
       card: card,
