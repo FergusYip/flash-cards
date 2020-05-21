@@ -45,6 +45,24 @@ exports.setCardPromptDB = async (cardId, prompt) => {
   return card.transform();
 };
 
+exports.setCardAnswerDB = async (cardId, answer) => {
+  const card = await Card.findByIdAndUpdate(
+    cardId,
+    {
+      $set: { answer: answer },
+    },
+    { new: true }
+  )
+    .select("_id prompt answer")
+    .exec();
+
+  if (!card) {
+    throw new Error("No valid entry found for provided cardId.");
+  }
+
+  return card.transform();
+};
+
 exports.deleteCardDB = async (cardId) => {
   const card = await Card.findByIdAndDelete(cardId).exec();
 
