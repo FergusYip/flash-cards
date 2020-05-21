@@ -8,14 +8,14 @@ module.exports = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_KEY);
 
     User.findById(decoded.userId)
       .exec()
       .then((user) => {
         if (!user) {
           // userId does not belong to any user
-          res.status(401).json({
+          return res.status(401).json({
             message: "Failed to authenticate user",
           });
         } else {
@@ -24,11 +24,12 @@ module.exports = (req, res, next) => {
         }
       })
       .catch((err) => {
-        res.status(401).json({
+        return res.status(401).json({
           message: "Failed to authenticate user", // Need better message
         });
       });
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(401).json({
       message: "Failed to authenticate user",
     });
