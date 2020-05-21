@@ -27,6 +27,16 @@ exports.getCardDB = async (cardId) => {
   return card.transform();
 };
 
+exports.getCardsDB = async (cardIds) => {
+  const cards = await Card.find({ _id: cardIds }).exec();
+
+  if (cards.length != cardIds.length) {
+    throw new Error("No valid entry found for provided cardId(s).");
+  }
+
+  return card.transform();
+};
+
 exports.setCardPromptDB = async (cardId, prompt) => {
   const card = await Card.findByIdAndUpdate(
     cardId,
