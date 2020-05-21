@@ -1,9 +1,3 @@
-require("dotenv").config();
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
-const User = require("../models/user");
-
 const authService = require("../services/auth");
 
 exports.registerController = async (req, res, next) => {
@@ -62,6 +56,29 @@ exports.loginController = async (req, res, next) => {
     return res.status(200).json(response);
   } catch (err) {
     console.log(err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
+exports.refreshAccessController = async (req, res, next) => {
+  const refreshToken = req.body.refreshToken;
+
+  if (typeof refreshToken != "string") {
+    return res.status(400).json({
+      error: "Incorrect parameters",
+      expected: {
+        refreshToken: "string",
+      },
+      recieved: req.body,
+    });
+  }
+
+  try {
+    const response = await authService.refreshAccessService(refreshToken);
+    return res.status(200).json(response);
+  } catch (err) {
     return res.status(500).json({
       error: err.message,
     });

@@ -62,7 +62,7 @@ exports.refreshAccessService = async (refreshToken) => {
     const dbTokenObject = await tokenDb.getTokenDB(refreshToken);
 
     if (!dbTokenObject) {
-      throw new Error("Provided refresh token is not valid/");
+      throw new Error("Provided refresh token is not valid.");
     }
 
     const decoded = jwt.verify(
