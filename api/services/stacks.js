@@ -163,6 +163,7 @@ exports.removeCardService = async (stackId, cardId) => {
   try {
     const card = await cardDb.getCardDB(cardId);
     const stack = await stackDb.removeCardsDB(stackId, [cardId]);
+    await cardDb.deleteCardDB(cardId);
 
     return {
       message: "Successfully removed card from stack",
@@ -177,7 +178,8 @@ exports.removeCardService = async (stackId, cardId) => {
 exports.removeCardsService = async (stackId, cardIds) => {
   try {
     const cards = await cardDb.getCardsDB(cardIds);
-    const stack = await stackDb.addCardsDB(stackId, cardIds);
+    const stack = await stackDb.removeCardsDB(stackId, cardIds);
+    await cardDb.deleteCardsDB(cardIds);
 
     return {
       message: "Successfully removed " + cardIds.length + "card(s) from stack.",

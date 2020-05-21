@@ -1,38 +1,50 @@
-const mongoose = require("mongoose");
+const cardService = require("../services/card");
 
-const Card = require("../models/cards");
-const Stack = require("../models/stacks");
-const User = require("../models/user");
-
-exports.cards_get_all = (req, res, next) => {
-  Card.find()
-    .select("_id prompt answer")
-    .exec()
-    .then((docs) => {
-      const response = {
-        count: docs.length,
-        cards: docs,
-        // cards: docs.map((doc) => {
-        //     return {
-        //         _id: doc._id,
-        //         prompt: doc.prompt,
-        //         answer: doc.answer,
-        //         request: {
-        //             type: "GET",
-        //             url: "http://localhost:3000/card/" + doc._id,
-        //         },
-        //     };
-        // }),
-      };
-      console.log(docs);
-      res.status(200).json(response);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        error: err,
-      });
+exports.getAllCardsController = async (req, res, next) => {
+  try {
+    const response = await cardService.getAllCardsService();
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
     });
+  }
+};
+
+exports.createCardController = async (req, res, next) => {
+  const userId = req.tokenPayload.userId;
+  const { prompt, answer, stackId } = req.body;
+
+  if (
+    ![prompt, answer].every((x) => typeof x == "string") ||
+    (typeof stackId != "undefined" && typeof stackId != "string")
+  ) {
+    return res.status(400).json({
+      error: "Incorrect parameters",
+      expected: {
+        prompt: "string",
+        answer: "string",
+        stackId: "string (optional)",
+      },
+      recieved: req.body,
+    });
+  }
+
+  try {
+    const response = await cardService.createCardService(
+      userId,
+      prompt,
+      answer,
+      stackId
+    );
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
 };
 
 exports.cards_create_card = (req, res, next) => {
@@ -88,29 +100,18 @@ exports.cards_create_card = (req, res, next) => {
     });
 };
 
-// exports.cards_create_card = (req, res, next) => {
-//   const card = new Card({
-//     _id: new mongoose.Types.ObjectId(),
-//     prompt: req.body.prompt,
-//     answer: req.body.answer,
-//   });
-
-//   card
-//     .save()
-//     .then((result) => {
-//       console.log(result);
-//       res.status(200).json({
-//         message: "Created new card successfully",
-//         card: card,
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//       res.status(500).json({
-//         error: err,
-//       });
-//     });
-// };
+exports.getCardController = async (req, res, next) => {
+  const cardId = req.params.cardId;
+  try {
+    const response = await cardService.getCardService(cardId);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
 
 exports.cards_get_card = (req, res, next) => {
   const id = req.params.cardId;
@@ -133,6 +134,56 @@ exports.cards_get_card = (req, res, next) => {
         error: err,
       });
     });
+};
+
+exports.setCardPromptController = async (req, res, next) => {
+  const cardId = req.params.cardId;
+  const prompt = req.body.prompt;
+
+  if (typeof prompt != "string") {
+    return res.status(400).json({
+      error: "Incorrect parameters",
+      expected: {
+        prompt: "string",
+      },
+      recieved: req.body,
+    });
+  }
+
+  try {
+    const response = await cardService.setCardPromptService(cardId, prompt);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err,
+    });
+  }
+};
+
+exports.setCardAnswerController = async (req, res, next) => {
+  const cardId = req.params.cardId;
+  const answer = req.body.answer;
+
+  if (typeof answer != "string") {
+    return res.status(400).json({
+      error: "Incorrect parameters",
+      expected: {
+        answer: "string",
+      },
+      recieved: req.body,
+    });
+  }
+
+  try {
+    const response = await cardService.setCardAnswerService(cardId, answer);
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: err,
+    });
+  }
 };
 
 exports.cards_patch_card = (req, res, next) => {
