@@ -73,3 +73,16 @@ exports.refreshAccessController = async (req, res, next) => {
     });
   }
 };
+
+exports.verifyAccessController = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+    res.tokenPayload = await authService.verifyAccessService(token);
+    next();
+  } catch (err) {
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+};
