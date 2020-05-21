@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
 const Card = require("../models/cards");
-const Stack = require("../models/stacks");
-const User = require("../models/user");
 
 exports.getAllCardsDB = async () => {
   const cards = await Card.find().select("_id prompt answer").exec();
