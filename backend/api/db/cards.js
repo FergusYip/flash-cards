@@ -28,13 +28,15 @@ exports.getCardDB = async (cardId) => {
 };
 
 exports.getCardsDB = async (cardIds) => {
-  const cards = await Card.find({ _id: cardIds }).exec();
+  const cards = await Card.find({ _id: cardIds })
+    .select("_id prompt answer")
+    .exec();
 
   if (cards.length != cardIds.length) {
     throw new Error("No valid entry found for provided cardId(s).");
   }
 
-  return card.transform();
+  return cards.map((card) => card.transform());
 };
 
 exports.setCardPromptDB = async (cardId, prompt) => {
