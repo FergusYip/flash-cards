@@ -23,8 +23,4 @@ router.put(
   CardsController.setCardAnswerController
 );
 
-// router.patch("/:cardId", checkAuth, CardsController.cards_patch_card);
-
-// router.delete("/:cardId", checkAuth, CardsController.cards_delete_card);
-
 module.exports = router;
