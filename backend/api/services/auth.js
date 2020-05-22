@@ -11,7 +11,7 @@ exports.registerService = async (email, password, name) => {
 
   if (exisitingUser) {
     const error = new Error("Email provided is already registered.");
-    error.status = 400;
+    error.status = 409;
     throw error;
   }
 
@@ -35,7 +35,7 @@ exports.authenticateService = async (email, password) => {
 
   if (!user) {
     const error = new Error("Failed to authenticate user.");
-    error.status = 400;
+    error.status = 401;
     throw error;
   }
 
@@ -43,7 +43,7 @@ exports.authenticateService = async (email, password) => {
 
   if (!isCorrect) {
     const error = new Error("Failed to authenticate user.");
-    error.status = 400;
+    error.status = 401;
     throw error;
   }
 
@@ -65,7 +65,7 @@ exports.refreshAccessService = async (refreshToken) => {
 
   if (!dbTokenObject) {
     const error = new Error("Provided refresh token is not valid.");
-    error.status = 400;
+    error.status = 401;
     throw error;
   }
 
