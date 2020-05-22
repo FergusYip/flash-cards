@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-const Card = require("../models/cards");
-const Stack = require("../models/stacks");
 const User = require("../models/user");
 
 exports.getUser = async (userId) => {

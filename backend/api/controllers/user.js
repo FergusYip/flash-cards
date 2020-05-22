@@ -1,5 +1,3 @@
-const User = require("../models/user");
-
 const userService = require("../services/user");
 
 exports.getDetailsController = async (req, res, next) => {
