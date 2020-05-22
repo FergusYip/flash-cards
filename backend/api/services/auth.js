@@ -97,6 +97,16 @@ exports.refreshAccessService = async (refreshToken) => {
   };
 };
 
+exports.checkAuthService = async (token) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_KEY);
+    await userDb.getUser(decoded.userId);
+    return decoded;
+  } catch {
+    throw new AuthenticationError();
+  }
+};
+
 const generateAccessToken = (email, userId) => {
   const accessToken = jwt.sign(
     {
