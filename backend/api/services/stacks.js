@@ -65,7 +65,7 @@ exports.deleteStackSafeService = async (userId, stackId) => {
   if (stack.default) {
     const error = new Error("Unable to delete default stack.");
     error.status = 400;
-    throw status;
+    throw error;
   }
 
   const cardIds = stack.cards.map((card) => card.cardId);
