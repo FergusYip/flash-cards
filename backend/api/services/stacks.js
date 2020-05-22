@@ -14,6 +14,7 @@ exports.getAllStacksService = async () => {
 exports.getUserStacksService = async (userId) => {
   const user = await userDb.getUser(userId);
   return {
+    message: "Successfully obtained all stacks",
     stacks: user.stacks,
     defaultStack: user.defaultStack,
   };
@@ -29,7 +30,7 @@ exports.createStackService = async (userId, name) => {
   const stack = await stackDb.createStackDB(name);
   await userDb.addStackDB(userId, stack.stackId);
   return {
-    message: "Created new stack successfully",
+    message: "Successfully created a new stack",
     stack: {
       stackId: stack.stackId,
       name: stack.name,
@@ -60,7 +61,7 @@ exports.setStackNameService = async (stackId, name) => {
   const stack = await stackDb.getStackDB(stackId);
 
   if (stack.default) {
-    const error = new Error("Unable to rename default stack.");
+    const error = new Error("Unable to rename default stack");
     error.status = 400;
     throw error;
   }
@@ -77,7 +78,7 @@ exports.deleteStackSafeService = async (userId, stackId) => {
   const stack = await stackDb.getStackDB(stackId);
 
   if (stack.default) {
-    const error = new Error("Unable to delete default stack.");
+    const error = new Error("Unable to delete default stack");
     error.status = 400;
     throw error;
   }
@@ -101,7 +102,7 @@ exports.deleteUnsafeService = async (stackId) => {
   const stack = await stackDb.getStackDB(stackId);
 
   if (stack.default) {
-    const error = new Error("Unable to delete default stack.");
+    const error = new Error("Unable to delete default stack");
     error.status = 400;
     throw error;
   }
@@ -112,7 +113,7 @@ exports.deleteUnsafeService = async (stackId) => {
   await stackDb.deleteStackDB(stackId);
 
   return {
-    message: "Successfully deleted stack and all contained cards.",
+    message: "Successfully deleted stack and all contained cards",
     stack: {
       stackId: stack.stackId,
       name: stack.name,
@@ -132,7 +133,7 @@ exports.addCardService = async (stackId, cardId) => {
   const stack = await stackDb.addCardsDB(stackId, [cardId]);
 
   return {
-    message: "Successfully added card to stack.",
+    message: "Successfully added card to stack",
     card: card,
     stack: stack,
   };
@@ -152,7 +153,7 @@ exports.addCardsService = async (stackId, cardIds) => {
   const stack = await stackDb.addCardsDB(stackId, cardIds);
 
   return {
-    message: "Successfully added " + cardIds.length + " card(s) to stack.",
+    message: "Successfully added " + cardIds.length + " card(s) to stack",
     card: cards,
     stack: stack,
   };
@@ -191,7 +192,7 @@ exports.removeCardsService = async (stackId, cardIds) => {
   await cardDb.deleteCardsDB(cardIds);
 
   return {
-    message: "Successfully removed " + cardIds.length + "card(s) from stack.",
+    message: "Successfully removed " + cardIds.length + "card(s) from stack",
     card: cards,
     stack: stack,
   };
