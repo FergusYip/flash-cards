@@ -34,19 +34,29 @@ app.use("/cards", cardRoutes);
 app.use("/stacks", stackRoutes);
 
 // Error Handling
-app.use((req, rs, next) => {
+app.use((req, res, next) => {
+  console.log(req);
   const error = new Error("Not Found");
   error.status = 404;
   next(error);
 });
 
 app.use((error, req, res, next) => {
-  res.status(error.status || 500);
-  res.json({
+  console.error(error);
+
+  const response = {
     error: {
+      name: error.name,
       message: error.message,
     },
-  });
+  };
+
+  if (error.name == "ParameterError") {
+    response.error.expected = error.expected;
+    response.error.received = req.body;
+  }
+
+  return res.status(error.status || 500).json(response);
 });
 
 module.exports = app;

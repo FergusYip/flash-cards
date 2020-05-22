@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const checkEnvVars = require("./check-env");
+const checkEnvVars = require("./utils/check-env");
 checkEnvVars();
 
 const mongoose = require("mongoose");

@@ -6,9 +6,7 @@ exports.getDetailsController = async (req, res, next) => {
     const response = await userService.getDetailsService(userId);
     return res.status(200).json(response);
   } catch (err) {
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -20,9 +18,7 @@ exports.setEmailController = async (req, res, next) => {
     const response = await userService.setEmailService(userId, email);
     return res.status(200).json(response);
   } catch (err) {
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -34,9 +30,7 @@ exports.setNameController = async (req, res, next) => {
     const response = await userService.setNameService(userId, name);
     return res.status(200).json(response);
   } catch (err) {
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -47,8 +41,6 @@ exports.deleteUserController = async (req, res, next) => {
     const response = await userService.deleteUserService(userId);
     return res.status(200).json(response);
   } catch (err) {
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
