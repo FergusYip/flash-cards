@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-const Card = require("../models/cards");
-const Stack = require("../models/stacks");
 const User = require("../models/user");
 
 exports.getUser = async (userId) => {
@@ -15,6 +13,7 @@ exports.getUser = async (userId) => {
 
   return {
     userId: user._id,
+    name: user.name,
     cards: user.cards,
     stacks: user.stacks.map((stack) => stack.transform()),
     email: user.email,
@@ -38,6 +37,7 @@ exports.createUserDB = async (email, password, name, defaultStack) => {
   await user.save();
   return user.transform();
 };
+
 exports.addStackDB = async (userId, stackId) => {
   const user = await User.updateOne(
     { _id: userId },
@@ -48,4 +48,31 @@ exports.addStackDB = async (userId, stackId) => {
   if (!user.nModified) {
     throw new Error("Failed to update user");
   }
+};
+
+exports.setEmailDB = async (userId, email) => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    {
+      $set: { email: email },
+    },
+    { new: true }
+  ).exec();
+  return user.transform();
+};
+
+exports.setNameDB = async (userId, name) => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    {
+      $set: { name: name },
+    },
+    { new: true }
+  ).exec();
+  return user.transform();
+};
+
+exports.deleteUserDB = async (userId) => {
+  const user = await User.findByIdAndDelete(userId).exec();
+  return user.transform();
 };
