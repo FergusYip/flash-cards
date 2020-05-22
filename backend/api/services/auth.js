@@ -6,7 +6,7 @@ const stackDb = require("../db/stacks");
 const userDb = require("../db/user");
 const tokenDb = require("../db/token");
 
-const { ParameterError } = require("../../utils/error");
+const { AuthenticationError, ParameterError } = require("../../utils/error");
 
 exports.registerService = async (email, password, name) => {
   if (![email, password, name].every((x) => typeof x == "string")) {
@@ -51,17 +51,13 @@ exports.authenticateService = async (email, password) => {
   const user = await userDb.getUserEmail(email);
 
   if (!user) {
-    const error = new Error("Failed to authenticate user.");
-    error.status = 401;
-    throw error;
+    throw new AuthenticationError();
   }
 
   const isCorrect = await bcrypt.compare(password, user.password);
 
   if (!isCorrect) {
-    const error = new Error("Failed to authenticate user.");
-    error.status = 401;
-    throw error;
+    throw new AuthenticationError();
   }
 
   const accessToken = generateAccessToken(email, user.userId);
@@ -87,9 +83,7 @@ exports.refreshAccessService = async (refreshToken) => {
   const dbTokenObject = await tokenDb.getTokenDB(refreshToken);
 
   if (!dbTokenObject) {
-    const error = new Error("Provided refresh token is not valid.");
-    error.status = 401;
-    throw error;
+    throw new AuthenticationError("Provided refresh token is not valid.");
   }
 
   const decoded = jwt.verify(dbTokenObject.token, process.env.JWT_REFRESH_KEY);
