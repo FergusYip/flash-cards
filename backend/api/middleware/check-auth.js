@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const { checkAuthService } = require("../services/auth");
 
 module.exports = async (req, res, next) => {
