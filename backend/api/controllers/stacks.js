@@ -5,10 +5,7 @@ exports.getAllStacksController = async (req, res, next) => {
     const response = await stackService.getAllStacksService();
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -19,10 +16,7 @@ exports.getUserStacksController = async (req, res, next) => {
     const response = await stackService.getUserStacksService(userId);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -44,10 +38,7 @@ exports.createStackController = async (req, res, next) => {
     const response = await stackService.createStackService(userId, name);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -58,10 +49,7 @@ exports.getStackController = async (req, res, next) => {
     const response = await stackService.getStackService(stackId);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -83,10 +71,7 @@ exports.setStackNameController = async (req, res, next) => {
     const response = await stackService.setStackNameService(stackId, name);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -98,10 +83,7 @@ exports.deleteStackSafeController = async (req, res, next) => {
     const response = await stackService.deleteStackSafeService(userId, stackId);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -112,10 +94,7 @@ exports.deleteUnsafeController = async (req, res, next) => {
     const response = await stackService.deleteUnsafeService(stackId);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -137,10 +116,7 @@ exports.addCardController = async (req, res, next) => {
     const response = await stackService.addCardService(stackId, cardId);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -162,10 +138,7 @@ exports.addCardsController = async (req, res, next) => {
     const response = await stackService.addCardsService(stackId, cardIds);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -177,10 +150,7 @@ exports.removeCardController = async (req, res, next) => {
     const response = await stackService.removeCardService(stackId, cardId);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -202,9 +172,6 @@ exports.removeCardsController = async (req, res, next) => {
     const response = await stackService.removeCardsService(stackId, cardIds);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };

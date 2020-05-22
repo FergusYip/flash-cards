@@ -5,10 +5,7 @@ exports.getAllCardsController = async (req, res, next) => {
     const response = await cardService.getAllCardsService();
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -40,10 +37,7 @@ exports.createCardController = async (req, res, next) => {
     );
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -106,10 +100,7 @@ exports.getCardController = async (req, res, next) => {
     const response = await cardService.getCardService(cardId);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -154,10 +145,7 @@ exports.setCardPromptController = async (req, res, next) => {
     const response = await cardService.setCardPromptService(cardId, prompt);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err,
-    });
+    next(err);
   }
 };
 
@@ -179,10 +167,7 @@ exports.setCardAnswerController = async (req, res, next) => {
     const response = await cardService.setCardAnswerService(cardId, answer);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err,
-    });
+    next(err);
   }
 };
 
