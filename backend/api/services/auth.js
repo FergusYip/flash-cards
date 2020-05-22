@@ -6,7 +6,17 @@ const stackDb = require("../db/stacks");
 const userDb = require("../db/user");
 const tokenDb = require("../db/token");
 
+const { ParameterError } = require("../../utils/error");
+
 exports.registerService = async (email, password, name) => {
+  if (![email, password, name].every((x) => typeof x == "string")) {
+    throw new ParameterError({
+      email: "string",
+      password: "string",
+      name: "string",
+    });
+  }
+
   const exisitingUser = await userDb.getUserEmail(email);
 
   if (exisitingUser) {
@@ -31,6 +41,13 @@ exports.registerService = async (email, password, name) => {
 };
 
 exports.authenticateService = async (email, password) => {
+  if (![email, password].every((x) => typeof x == "string")) {
+    throw new ParameterError({
+      email: "string",
+      password: "string",
+    });
+  }
+
   const user = await userDb.getUserEmail(email);
 
   if (!user) {
@@ -61,6 +78,12 @@ exports.authenticateService = async (email, password) => {
 };
 
 exports.refreshAccessService = async (refreshToken) => {
+  if (typeof refreshToken != "string") {
+    throw new ParameterError({
+      refreshToken: "string",
+    });
+  }
+
   const dbTokenObject = await tokenDb.getTokenDB(refreshToken);
 
   if (!dbTokenObject) {
