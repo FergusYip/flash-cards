@@ -6,6 +6,14 @@ class AuthenticationError extends Error {
   }
 }
 
+class NotFoundError extends Error {
+  constructor() {
+    super("404 Not Found");
+    this.name = "NotFoundError";
+    this.status = 404;
+  }
+}
+
 class ParameterError extends Error {
   constructor(expected) {
     super("Incorrect parameters");
@@ -15,4 +23,4 @@ class ParameterError extends Error {
   }
 }
 
-module.exports = { AuthenticationError, ParameterError };
+module.exports = { AuthenticationError, NotFoundError, ParameterError };

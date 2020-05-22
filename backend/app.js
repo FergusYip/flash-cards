@@ -9,6 +9,8 @@ const userRoutes = require("./api/routes/user");
 const cardRoutes = require("./api/routes/cards");
 const stackRoutes = require("./api/routes/stacks");
 
+const { NotFoundError } = require("./utils/error");
+
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -35,10 +37,7 @@ app.use("/stacks", stackRoutes);
 
 // Error Handling
 app.use((req, res, next) => {
-  console.log(req);
-  const error = new Error("Not Found");
-  error.status = 404;
-  next(error);
+  next(new NotFoundError());
 });
 
 app.use((error, req, res, next) => {
