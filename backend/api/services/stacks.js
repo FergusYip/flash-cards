@@ -2,6 +2,8 @@ const stackDb = require("../db/stacks");
 const userDb = require("../db/user");
 const cardDb = require("../db/cards");
 
+const { ParameterError } = require("../../utils/error");
+
 exports.getAllStacksService = async () => {
   const stacks = await stackDb.getAllStacksDB();
   return {
@@ -18,6 +20,12 @@ exports.getUserStacksService = async (userId) => {
 };
 
 exports.createStackService = async (userId, name) => {
+  if (typeof name != "string") {
+    throw new ParameterError({
+      name: "string",
+    });
+  }
+
   const stack = await stackDb.createStackDB(name);
   await userDb.addStackDB(userId, stack.stackId);
   return {
@@ -43,6 +51,12 @@ exports.getStackService = async (stackId) => {
 };
 
 exports.setStackNameService = async (stackId, name) => {
+  if (typeof name != "string") {
+    throw new ParameterError({
+      name: "string",
+    });
+  }
+
   const stack = await stackDb.getStackDB(stackId);
 
   if (stack.default) {
@@ -108,6 +122,12 @@ exports.deleteUnsafeService = async (stackId) => {
 };
 
 exports.addCardService = async (stackId, cardId) => {
+  if (typeof cardId != "string") {
+    throw new ParameterError({
+      cardId: "string",
+    });
+  }
+
   const card = await cardDb.getCardDB(cardId);
   const stack = await stackDb.addCardsDB(stackId, [cardId]);
 
@@ -119,17 +139,32 @@ exports.addCardService = async (stackId, cardId) => {
 };
 
 exports.addCardsService = async (stackId, cardIds) => {
+  if (
+    !(cardIds instanceof Array) ||
+    !cardIds.every((cardId) => cardId instanceof String)
+  ) {
+    throw new ParameterError({
+      cardIds: "array of strings",
+    });
+  }
+
   const cards = await cardDb.getCardsDB(cardIds);
   const stack = await stackDb.addCardsDB(stackId, cardIds);
 
   return {
-    message: "Successfully added " + cardIds.length + "card(s) to stack.",
+    message: "Successfully added " + cardIds.length + " card(s) to stack.",
     card: cards,
     stack: stack,
   };
 };
 
 exports.removeCardService = async (stackId, cardId) => {
+  if (typeof cardId != "string") {
+    throw new ParameterError({
+      cardId: "string",
+    });
+  }
+
   const card = await cardDb.getCardDB(cardId);
   const stack = await stackDb.removeCardsDB(stackId, [cardId]);
   await cardDb.deleteCardDB(cardId);
@@ -142,6 +177,15 @@ exports.removeCardService = async (stackId, cardId) => {
 };
 
 exports.removeCardsService = async (stackId, cardIds) => {
+  if (
+    !(cardIds instanceof Array) ||
+    !cardIds.every((cardId) => cardId instanceof String)
+  ) {
+    throw new ParameterError({
+      cardIds: "array of strings",
+    });
+  }
+
   const cards = await cardDb.getCardsDB(cardIds);
   const stack = await stackDb.removeCardsDB(stackId, cardIds);
   await cardDb.deleteCardsDB(cardIds);
