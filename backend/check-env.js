@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 module.exports = () => {
   const envVars = {
     MONGO_ATLAS_URI: process.env.MONGO_ATLAS_URI,
