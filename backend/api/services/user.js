@@ -13,6 +13,12 @@ exports.getDetailsService = async (userId) => {
 };
 
 exports.setEmailService = async (userId, email) => {
+  if (typeof email != "string") {
+    throw new ParameterError({
+      email: "string",
+    });
+  }
+
   const user = await userDb.setEmailDB(userId, email);
   return {
     message: "Successfully changed user email",
@@ -25,6 +31,12 @@ exports.setEmailService = async (userId, email) => {
 };
 
 exports.setNameService = async (userId, name) => {
+  if (typeof name != "string") {
+    throw new ParameterError({
+      name: "string",
+    });
+  }
+
   const user = await userDb.setNameDB(userId, name);
   return {
     message: "Successfully changed user name",
