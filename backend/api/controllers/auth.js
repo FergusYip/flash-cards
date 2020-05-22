@@ -19,10 +19,7 @@ exports.registerController = async (req, res, next) => {
     const response = await authService.registerService(email, password, name);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -44,10 +41,7 @@ exports.loginController = async (req, res, next) => {
     const response = await authService.authenticateService(email, password);
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
 
@@ -68,8 +62,6 @@ exports.refreshAccessController = async (req, res, next) => {
     const response = await authService.refreshAccessService(refreshToken);
     return res.status(200).json(response);
   } catch (err) {
-    return res.status(500).json({
-      error: err.message,
-    });
+    next(err);
   }
 };
