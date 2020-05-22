@@ -1,5 +1,8 @@
 require("dotenv").config();
 
+const checkEnvVars = require("./check-env");
+checkEnvVars();
+
 const mongoose = require("mongoose");
 
 mongoose.connect(process.env.MONGO_ATLAS_URI, {
