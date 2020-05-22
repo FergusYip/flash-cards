@@ -8,8 +8,11 @@ const tokenDb = require("../db/token");
 
 exports.registerService = async (email, password, name) => {
   const exisitingUser = await userDb.getUserEmail(email);
+
   if (exisitingUser) {
-    throw new Error("Email provided is already registered.");
+    const error = new Error("Email provided is already registered.");
+    error.status = 400;
+    throw error;
   }
 
   const hashedPW = await bcrypt.hash(password, 10);
@@ -28,58 +31,53 @@ exports.registerService = async (email, password, name) => {
 };
 
 exports.authenticateService = async (email, password) => {
-  try {
-    const user = await userDb.getUserEmail(email);
+  const user = await userDb.getUserEmail(email);
 
-    if (!user) {
-      throw new Error("Failed to authenticate user.");
-    }
-
-    const isCorrect = await bcrypt.compare(password, user.password);
-
-    if (!isCorrect) {
-      throw new Error("Failed to authenticate user.");
-    }
-
-    const accessToken = generateAccessToken(email, user.userId);
-    const refreshToken = generateRefreshToken(email, user.userId);
-
-    await tokenDb.addTokenDB(refreshToken);
-
-    return {
-      message: "Successfully authenticated user",
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-      userId: user.userId,
-    };
-  } catch (err) {
-    throw new Error(err.message);
+  if (!user) {
+    const error = new Error("Failed to authenticate user.");
+    error.status = 400;
+    throw error;
   }
+
+  const isCorrect = await bcrypt.compare(password, user.password);
+
+  if (!isCorrect) {
+    const error = new Error("Failed to authenticate user.");
+    error.status = 400;
+    throw error;
+  }
+
+  const accessToken = generateAccessToken(email, user.userId);
+  const refreshToken = generateRefreshToken(email, user.userId);
+
+  await tokenDb.addTokenDB(refreshToken);
+
+  return {
+    message: "Successfully authenticated user",
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+    userId: user.userId,
+  };
 };
 
 exports.refreshAccessService = async (refreshToken) => {
-  try {
-    const dbTokenObject = await tokenDb.getTokenDB(refreshToken);
+  const dbTokenObject = await tokenDb.getTokenDB(refreshToken);
 
-    if (!dbTokenObject) {
-      throw new Error("Provided refresh token is not valid.");
-    }
-
-    const decoded = jwt.verify(
-      dbTokenObject.token,
-      process.env.JWT_REFRESH_KEY
-    );
-
-    const accessToken = generateAccessToken(decoded.email, decoded.userId);
-
-    return {
-      message: "Successfuly refreshed the access token.",
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    };
-  } catch (err) {
-    throw new Error(err.message);
+  if (!dbTokenObject) {
+    const error = new Error("Provided refresh token is not valid.");
+    error.status = 400;
+    throw error;
   }
+
+  const decoded = jwt.verify(dbTokenObject.token, process.env.JWT_REFRESH_KEY);
+
+  const accessToken = generateAccessToken(decoded.email, decoded.userId);
+
+  return {
+    message: "Successfuly refreshed the access token.",
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+  };
 };
 
 const generateAccessToken = (email, userId) => {
