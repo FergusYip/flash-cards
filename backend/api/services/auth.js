@@ -20,7 +20,7 @@ exports.registerService = async (email, password, name) => {
   const exisitingUser = await userDb.getUserEmail(email);
 
   if (exisitingUser) {
-    const error = new Error("Email provided is already registered.");
+    const error = new Error("Email provided is already registered");
     error.status = 409;
     throw error;
   }
@@ -83,7 +83,7 @@ exports.refreshAccessService = async (refreshToken) => {
   const dbTokenObject = await tokenDb.getTokenDB(refreshToken);
 
   if (!dbTokenObject) {
-    throw new AuthenticationError("Provided refresh token is not valid.");
+    throw new AuthenticationError("Provided refresh token is not valid");
   }
 
   const decoded = jwt.verify(dbTokenObject.token, process.env.JWT_REFRESH_KEY);
@@ -91,7 +91,7 @@ exports.refreshAccessService = async (refreshToken) => {
   const accessToken = generateAccessToken(decoded.email, decoded.userId);
 
   return {
-    message: "Successfuly refreshed the access token.",
+    message: "Successfuly refreshed the access token",
     accessToken: accessToken,
     refreshToken: refreshToken,
   };

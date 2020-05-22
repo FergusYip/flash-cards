@@ -1,6 +1,6 @@
 class AuthenticationError extends Error {
   constructor(message) {
-    super(message || "Failed to authenticate user.");
+    super(message || "Failed to authenticate user");
     this.name = "AuthenticationError";
     this.status = 401;
   }
@@ -8,7 +8,7 @@ class AuthenticationError extends Error {
 
 class ParameterError extends Error {
   constructor(expected) {
-    super("Incorrect parameters.");
+    super("Incorrect parameters");
     this.name = "ParameterError";
     this.status = 400;
     this.expected = expected;
