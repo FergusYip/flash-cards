@@ -9,9 +9,6 @@ const userRoutes = require("./api/routes/user");
 const cardRoutes = require("./api/routes/cards");
 const stackRoutes = require("./api/routes/stacks");
 
-const checkEnvVars = require("./check-env");
-checkEnvVars();
-
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
