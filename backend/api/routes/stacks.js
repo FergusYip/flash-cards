@@ -41,7 +41,7 @@ router.delete(
   StacksController.removeCardController
 );
 
-router.post(
+router.delete(
   "/:stackId/remove_many",
   checkAuth,
   StacksController.removeCardsController
