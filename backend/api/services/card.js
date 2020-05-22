@@ -2,6 +2,8 @@ const cardDb = require("../db/cards");
 const userDb = require("../db/user");
 const stackDb = require("../db/stacks");
 
+const { ParameterError } = require("../../utils/error");
+
 exports.getAllCardsService = async () => {
   const cards = await cardDb.getAllCardsDB();
   return {
@@ -10,6 +12,18 @@ exports.getAllCardsService = async () => {
 };
 
 exports.createCardService = async (userId, prompt, answer, stackId) => {
+  if (
+    typeof prompt != "string" ||
+    typeof answer != "string" ||
+    (typeof stackId != "undefined" && typeof stackId != "string")
+  ) {
+    throw new ParameterError({
+      prompt: "string",
+      answer: "string",
+      stackId: "string (optional)",
+    });
+  }
+
   const card = await cardDb.createCardDB(prompt, answer);
   const user = await userDb.getUser(userId);
 
@@ -34,6 +48,12 @@ exports.getCardService = async (cardId) => {
 };
 
 exports.setCardPromptService = async (cardId, prompt) => {
+  if (typeof prompt != "string") {
+    throw new ParameterError({
+      prompt: "string",
+    });
+  }
+
   const card = await cardDb.setCardPromptDB(cardId, prompt);
   return {
     message: "Successfully updated card prompt to " + prompt,
@@ -42,6 +62,11 @@ exports.setCardPromptService = async (cardId, prompt) => {
 };
 
 exports.setCardAnswerService = async (cardId, answer) => {
+  if (typeof answer != "string") {
+    throw new ParameterError({
+      answer: "string",
+    });
+  }
   const card = await cardDb.setCardAnswerDB(cardId, answer);
   return {
     message: "Successfully updated card answer to " + answer,
