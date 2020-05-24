@@ -27,6 +27,14 @@ exports.createStackService = async (userId, name) => {
     });
   }
 
+  if (name.length < 1 || name.length > 50) {
+    const error = new Error(
+      "Stack name must be between 1 and 50 characters inclusive"
+    );
+    error.status = 400;
+    throw error;
+  }
+
   const stack = await stackDb.createStackDB(name);
   await userDb.addStackDB(userId, stack.stackId);
   return {
@@ -56,6 +64,14 @@ exports.setStackNameService = async (stackId, name) => {
     throw new ParameterError({
       name: "string",
     });
+  }
+
+  if (name.length < 1 || name.length > 50) {
+    const error = new Error(
+      "Stack name must be between 1 and 50 characters inclusive"
+    );
+    error.status = 400;
+    throw error;
   }
 
   const stack = await stackDb.getStackDB(stackId);
