@@ -19,6 +19,13 @@ exports.setEmailService = async (userId, email) => {
     });
   }
 
+  const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+  if (!emailRegex.test(email)) {
+    const error = new Error("Email provided is not valid");
+    error.status = 409;
+    throw error;
+  }
+
   const user = await userDb.setEmailDB(userId, email);
   return {
     message: "Successfully changed user email",
@@ -35,6 +42,14 @@ exports.setNameService = async (userId, name) => {
     throw new ParameterError({
       name: "string",
     });
+  }
+
+  if (name.length < 1 || name.length > 50) {
+    const error = new Error(
+      "Name must be between 1 and 50 characters inclusive"
+    );
+    error.status = 409;
+    throw error;
   }
 
   const user = await userDb.setNameDB(userId, name);

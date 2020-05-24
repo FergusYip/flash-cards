@@ -24,6 +24,12 @@ exports.createCardService = async (userId, prompt, answer, stackId) => {
     });
   }
 
+  if (!prompt.length || !answer.length) {
+    const error = new Error("Prompt and answer cannot be empty");
+    error.status = 400;
+    throw error;
+  }
+
   const card = await cardDb.createCardDB(prompt, answer);
   const user = await userDb.getUser(userId);
 

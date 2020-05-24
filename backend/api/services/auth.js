@@ -17,6 +17,27 @@ exports.registerService = async (email, password, name) => {
     });
   }
 
+  const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+  if (!emailRegex.test(email)) {
+    const error = new Error("Email provided is not valid");
+    error.status = 409;
+    throw error;
+  }
+
+  if (password.length < 8) {
+    const error = new Error("Password must be a least 8 characters");
+    error.status = 409;
+    throw error;
+  }
+
+  if (name.length < 1 || name.length > 50) {
+    const error = new Error(
+      "Name must be between 1 and 50 characters inclusive"
+    );
+    error.status = 409;
+    throw error;
+  }
+
   const exisitingUser = await userDb.getUserEmail(email);
 
   if (exisitingUser) {
