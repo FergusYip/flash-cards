@@ -5,5 +5,8 @@
     {
       "url": "heroku/nodejs"
     }
-  ]
+  ],
+  "scripts": {
+    "start": "node backend/server.js"
+  }
 }
