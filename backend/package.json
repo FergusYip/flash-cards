@@ -29,7 +29,8 @@
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.14",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "rate-limiter-flexible": "^2.1.6"
   },
   "devDependencies": {
     "chai": "^4.2.0",

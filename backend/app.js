@@ -5,6 +5,7 @@ const morgan = require("morgan"); // Logging package
 const bodyParser = require("body-parser");
 const compression = require("compression");
 const helmet = require("helmet");
+const rateLimiterRedisMiddleware = require("./middleware/rateLimiterRedis");
 
 const authRoutes = require("./api/routes/auth");
 const userRoutes = require("./api/routes/user");
@@ -18,6 +19,7 @@ app.use(compression()); //Compress all routes
 app.use(morgan("short"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(rateLimiterRedisMiddleware);
 
 // CORS
 app.use((req, res, next) => {
