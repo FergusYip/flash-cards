@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan"); // Logging package
 const bodyParser = require("body-parser");
+const compression = require("compression");
+const helmet = require("helmet");
 
 const authRoutes = require("./api/routes/auth");
 const userRoutes = require("./api/routes/user");
@@ -11,7 +13,9 @@ const stackRoutes = require("./api/routes/stacks");
 
 const { NotFoundError } = require("./utils/error");
 
-app.use(morgan("dev"));
+app.use(helmet());
+app.use(compression()); //Compress all routes
+app.use(morgan("short"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -41,7 +45,7 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
-  console.error(error);
+  // console.error(error);
 
   const response = {
     error: {
