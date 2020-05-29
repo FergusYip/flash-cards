@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import UserStore from "./stores/UserStore";
 import LoginForm from "./components/LoginForm";
 import SubmitButton from "./components/SubmitButton.js";
-import "./App.css";
+import "bootstrap/dist/css/bootstrap.css";
 
 class App extends React.Component {
   async componentDidMount() {
@@ -76,9 +76,18 @@ class App extends React.Component {
           </div>
         );
       }
+
+      const style = {
+        display: "flex",
+        paddingTop: "40px",
+        paddingBottom: "40px",
+        // position: "absolute",
+        top: "50%",
+        transform: "translateY(+50%)",
+      };
       return (
-        <div className="app">
-          <div className="container">
+        <div className="app" style={{ position: "relative" }}>
+          <div className="container" style={style}>
             <LoginForm />
           </div>
         </div>
