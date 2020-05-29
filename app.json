@@ -1,0 +1,9 @@
+{
+  "name": "flash-cards",
+  "repository": "https://github.com/FergusYip/flash-cards",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
