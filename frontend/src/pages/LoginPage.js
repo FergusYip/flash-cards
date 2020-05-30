@@ -7,7 +7,6 @@ function LoginPage({ setAuth, ...props }) {
   const [values, setValues] = React.useState({
     email: "",
     password: "",
-    formClasses: "",
   });
 
   const handleChange = (name) => (event) => {
