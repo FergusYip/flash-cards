@@ -16,19 +16,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 
 import MenuAppBar from "../components/AppBar";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://github.com/FergusYip">
-        Yip Wai Lam Fergus
-      </Link>{" "}
-      {"2020" || new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import Copyright from "../components/Copyright";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
