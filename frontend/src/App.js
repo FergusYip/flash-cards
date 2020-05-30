@@ -48,7 +48,8 @@ function App() {
           {/* <Route path="/profile" component={ProfilePage} /> */}
           {/* <Route exact path="/forgot_password" component={ForgotPasswordPage} />
           <Route exact path="/reset_password" component={ResetPasswordPage} /> */}
-          <ProtectedRoute exact path="/" component={HomePage} />
+          <Route exact path="/" component={HomePage} />
+          {/* <ProtectedRoute exact path="/" component={HomePage} /> */}
           {/* <ProtectedRoute path="/profile/:profile" component={ProfilePage} /> */}
           {/* <ProtectedRoute path="/channel/:channel_id" component={ChannelPage} />
           <ProtectedRoute path="/search/:query_str" component={SearchPage} />
