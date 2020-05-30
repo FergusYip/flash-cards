@@ -1,9 +1,56 @@
 import React from "react";
 import axios from "axios";
 
-import Header from "../components/Header";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import TextField from "@material-ui/core/TextField";
+// import FormControlLabel from "@material-ui/core/FormControlLabel";
+// import Checkbox from "@material-ui/core/Checkbox";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {"Copyright © "}
+      <Link color="inherit" href="https://github.com/FergusYip">
+        Yip Wai Lam Fergus
+      </Link>{" "}
+      {"2020" || new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
 
 function LoginPage({ setAuth, ...props }) {
+  const classes = useStyles();
+
   const [values, setValues] = React.useState({
     email: "",
     password: "",
@@ -33,66 +80,74 @@ function LoginPage({ setAuth, ...props }) {
       .catch((err) => {});
   }
 
-  const style = {
-    display: "flex",
-    paddingTop: "40px",
-    paddingBottom: "40px",
-    transform: "translateY(+45%)",
-  };
-
-  const loginStyle = {
-    width: "100%",
-    maxWidth: " 330px",
-    padding: "15px",
-    margin: "auto",
-  };
-
   return (
-    <div className="app" style={{ position: "relative" }}>
-      <Header />
-      <div className="container" style={style}>
-        <div className="loginForm" style={loginStyle}>
-          <h1 className="h3 mb-3 font-weight-normal">Log In</h1>
-          <form className="form-signin" onSubmit={handleSubmit} noValidate>
-            <div className="form-group">
-              <label htmlFor="email-input">Email address</label>
-              <input
-                type="email"
-                className="form-control"
-                id="email-input"
-                aria-describedby="emailHelp"
-                value={values.email}
-                onChange={handleChange("email")}
-                required
-              />
-              <div className="invalid-feedback">
-                Please enter a valid email address.
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="password-input">Password</label>
-              <input
-                type="password"
-                className="form-control"
-                id="password-input"
-                value={values.password}
-                onChange={handleChange("password")}
-                required
-              />
-              <div className="invalid-feedback">
-                Please password of length greater than 8.
-              </div>
-            </div>
-            <p>
-              Don't have an accout? <a href="/register">Sign up here</a>
-            </p>
-            <button type="submit" className="btn btn-primary">
-              Log In
-            </button>
-          </form>
-        </div>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <form className={classes.form} noValidate onSubmit={handleSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={values.email}
+            onChange={handleChange("email")}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={values.password}
+            onChange={handleChange("password")}
+          />
+          {/* <FormControlLabel
+            control={<Checkbox value="remember" color="primary" />}
+            label="Remember me"
+          /> */}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign In
+          </Button>
+          <Grid container>
+            <Grid item xs>
+              {/* <Link href="#" variant="body2">
+                Forgot password?
+              </Link> */}
+            </Grid>
+            <Grid item>
+              <Link href="/register" variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
+          </Grid>
+        </form>
       </div>
-    </div>
+      <Box mt={8}>
+        <Copyright />
+      </Box>
+    </Container>
   );
 }
 

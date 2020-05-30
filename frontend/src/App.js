@@ -45,7 +45,7 @@ function App() {
               return <RegisterPage {...props} setAuth={setAuth} />;
             }}
           />
-          <Route path="/profile" component={ProfilePage} />
+          {/* <Route path="/profile" component={ProfilePage} /> */}
           {/* <Route exact path="/forgot_password" component={ForgotPasswordPage} />
           <Route exact path="/reset_password" component={ResetPasswordPage} /> */}
           <ProtectedRoute exact path="/" component={HomePage} />
