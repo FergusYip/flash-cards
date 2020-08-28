@@ -58,9 +58,12 @@ function LoginPage({ setAuth, ...props }) {
     // Quick validation
     if (!email || !password) return;
 
+    console.log("clicked sign in");
+
     // Send to backend
     axios
-      .post(`/auth/login`, { email, password })
+      .post("https://localhost:4000")
+      // .post(`/auth/login`, { email, password })
       .then((response) => {
         console.log(response);
         const data = response.data;

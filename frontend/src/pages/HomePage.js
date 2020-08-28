@@ -13,8 +13,9 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Link from "@material-ui/core/Link";
-import MenuAppBar from "../components/AppBar";
 
+import MenuAppBar from "../components/AppBar";
+import SectionHeader from "../components/SectionHeader";
 import StackThumbnail from "../components/StackThumbnail";
 import Footer from "../components/Footer";
 
@@ -46,9 +47,6 @@ const useStyles = makeStyles((theme) => ({
   },
   header: {
     paddingTop: theme.spacing(8),
-  },
-  createButton: {
-    paddingTop: theme.spacing(2),
   },
 }));
 
@@ -105,25 +103,8 @@ function HomePage() {
       <CssBaseline />
       <MenuAppBar isAuthenticated={true} />
       <main>
-        <Container className={classes.header} maxWidth="md">
-          <Grid container>
-            <Grid item xs>
-              <Typography component="h1" variant="h3">
-                Stacks
-              </Typography>
-              {/* <Link href="#" variant="body2">
-                Forgot password?
-              </Link> */}
-            </Grid>
-            <Grid item className={classes.createButton}>
-              <Button variant="contained" color="primary">
-                New Stack
-              </Button>
-            </Grid>
-          </Grid>
-        </Container>
+        <SectionHeader title="Stacks" buttonText="New Stack" />
         <Container className={classes.cardGrid} maxWidth="md">
-          {/* End hero unit */}
           <Grid container spacing={4}>
             {stacks.map((stack) => (
               <Grid item key={stack.stackId} xs={12} sm={6} md={4}>

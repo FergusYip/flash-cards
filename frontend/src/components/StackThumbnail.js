@@ -22,6 +22,9 @@ const useStyles = makeStyles({
   pos: {
     marginBottom: 12,
   },
+  link: {
+    textDecoration: "none",
+  },
 });
 
 export default function StackThumbnail(props) {
